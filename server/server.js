@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const userRoutes = require('./routes/userRoutes');
 const postRoutes = require('./routes/postRoutes');
+const notificationRoutes = require('./routes/notificationsRoutes');
 
 const app = express();
 const PORT = 8000;
@@ -22,5 +23,6 @@ mongoose.connect('mongodb+srv://seyagubzade:seyagubzade123@cluster0.2wwolad.mong
 
 app.use('/api', userRoutes);
 app.use('/api', postRoutes);
+app.use('/api', notificationRoutes);
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

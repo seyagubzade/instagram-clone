@@ -1,3 +1,4 @@
+const Notification = require("../models/Notification.model");
 const Post = require("../models/Post.model");
 const User = require("../models/User.model");
 
@@ -41,7 +42,7 @@ exports.getAllPosts = async (req, res) => {
 
 // Get all posts by user
 exports.getAllPostsByUser = async (req, res) => {
-  const userId = req.user.userId; // Access userId from the request object after authentication
+  const userId = req.params.id; // Access userId from the request object after authentication
   try {
     // Fetch all posts of the current user from the database
     const posts = await Post.find({ author: userId })
@@ -97,6 +98,7 @@ exports.getPostById = async (req, res) => {
 exports.likePost = async (req, res) => {
   const postId = req.params.id;
   const userId = req.user.userId; // Assuming you attach userId to the request object after authentication
+  const { username } = req.body;
 
   try {
     // Find the post by ID
@@ -118,6 +120,15 @@ exports.likePost = async (req, res) => {
     post.likes.push(userId);
     await post.save();
 
+    // Create a notification for the post author
+    const notification = new Notification({
+      user: post.author,
+      type: 'like',
+      content: `${username} liked your post`,
+      read: false
+    });
+    await notification.save();
+
     res.json({ message: "Post liked successfully" });
   } catch (error) {
     console.error(error);
@@ -128,7 +139,7 @@ exports.likePost = async (req, res) => {
 // Add a Comment
 exports.addComment = async (req, res) => {
   const postId = req.params.id;
-  const { text } = req.body;
+  const { text,username } = req.body;
   const userId = req.user.userId; // Assuming you attach userId to the request object after authentication
 
   try {
@@ -143,6 +154,15 @@ exports.addComment = async (req, res) => {
     // Add the comment to the comments array
     post.comments.push({ text, author: userId });
     await post.save();
+
+    // Create a notification for the post author
+    const notification = new Notification({
+      user: post.author,
+      type: 'comment',
+      content: `${username} commented on your post`,
+      read: false
+    });
+    await notification.save();
 
     res.json({ message: "Comment added successfully" });
   } catch (error) {

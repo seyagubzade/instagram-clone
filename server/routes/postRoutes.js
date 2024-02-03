@@ -10,7 +10,7 @@ router.post('/posts', authenticateUser, postController.createPost);
 router.get('/posts', postController.getAllPosts);
 
 // Get all posts route
-router.get('/user/posts', authenticateUser, postController.getAllPostsByUser);
+router.get('/user/:id/posts', postController.getAllPostsByUser);
 
 // Get posts by id route
 router.get('/posts/:id', postController.getPostById);
@@ -19,9 +19,9 @@ router.get('/posts/:id', postController.getPostById);
 router.delete('/posts/:id', postController.deletePostById);
 
 // Like a post
-router.put('/posts/:id/like', postController.likePost);
+router.put('/posts/:id/like', authenticateUser, postController.likePost);
 
 // Add a comment to a post
-router.post('/posts/:id/comments', postController.addComment);
+router.put('/posts/:id/comments', authenticateUser, postController.addComment);
 
 module.exports = router;

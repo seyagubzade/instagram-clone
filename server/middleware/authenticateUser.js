@@ -17,6 +17,7 @@ const authenticateUser = (req, res, next) => {
     
     // Attach the user ID to the request object
     req.user = decodedToken; // Assuming decodedToken contains the user ID
+    // console.log(req.user)
     next();
   });
 };
