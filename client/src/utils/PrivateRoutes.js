@@ -7,10 +7,12 @@ const PrivateRoutes = () => {
   const { isAuthenticated, setIsAuthenticated, userData } = useAuth();
   const navigate = useNavigate();
 
+  
+
   useEffect(() => {
     console.log("userData>>>", userData);
     console.log("isAuthenticated>>>",isAuthenticated)
-    navigate("/")
+    // navigate("/")
   }, [isAuthenticated]);
 
   return isAuthenticated ? <Outlet /> : <Navigate to="/login" />;

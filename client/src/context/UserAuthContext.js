@@ -15,21 +15,15 @@ export const AuthProvider = ({ children }) => {
     console.log("Test>>>>",data)
     console.log("AuthContext user data>>>>>",userData)
     setIsAuthenticated((JSON.parse(localStorage.getItem("authUser"))?.token) || false);
+    setUserData(JSON.parse(localStorage.getItem("authUser"))?.user || null)
     console.log("AuthContext user BEzdim>>>>>",isAuthenticated)
   }, [data]);
-
-//   useEffect(() => {
-//     console.log("Refresh  Test>>>>",data)
-//     console.log("AuthContext user data>>>>>",userData)
-//     setUserData(data)
-//     setIsAuthenticated(JSON.parse(localStorage.getItem("authUser"))?.token);
-//   }, []);
 
   return (
     <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, userData }}>
       {children}
     </AuthContext.Provider>
-  );
+  );  
 };
 
 // Custom hook to use the Auth Context
