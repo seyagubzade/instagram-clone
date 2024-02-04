@@ -14,7 +14,7 @@ exports.createPost = async (req, res) => {
 
     // Add the post to the user's posts array
     const user = await User.findById(authorId);
-    user.posts.push(newPost._id);
+    user.posts.push(newPost); // Push the entire new post object
     await user.save();
 
     res
@@ -168,5 +168,26 @@ exports.addComment = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+// Get posts from users the current user follows
+exports.getPostsFromFollowing = async (req, res) => {
+  const userId = req.user.userId; // Assuming you attach userId to the request object after authentication
+
+  try {
+    // Find the current user to get the list of users they follow
+    const user = await User.findById(userId);
+    const followingIds = user.following; // Assuming following is an array of user IDs
+
+    // Find all posts from users the current user follows
+    const postsFromFollowing = await Post.find({ author: { $in: followingIds } })
+      .populate('author', 'name')
+      .populate('comments.author', 'name');
+
+    res.json(postsFromFollowing);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };

@@ -10,8 +10,6 @@ const PrivateRoutes = () => {
   
 
   useEffect(() => {
-    console.log("userData>>>", userData);
-    console.log("isAuthenticated>>>",isAuthenticated)
     // navigate("/")
   }, [isAuthenticated]);
 

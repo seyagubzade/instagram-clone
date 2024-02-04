@@ -23,13 +23,16 @@ export const getAllUsers = createAsyncThunk(
 export const getUserById = createAsyncThunk(
   "getUserById",
   async ({ id }, thunkApi) => {
+    const mainUserId = JSON.parse(localStorage.getItem("mainUser"))._id
     try {
       const response = await client({
         url: `/users/${id}`,
         method: "GET",
         //   data: {email, password, name, username},
       });
-      console.log("getUserById>>", response.data);
+      if(response.data._id == mainUserId){
+        localStorage.setItem("mainUser", JSON.stringify(response.data))
+      }
       return response.data;
     } catch (error) {
       return thunkApi.rejectWithValue(error.data);
@@ -46,7 +49,6 @@ export const deleteUser = createAsyncThunk(
         method: "DELETE",
         //   data: {email, password, name, username},
       });
-      console.log("getUserById>>", response.data);
       return response.data;
     } catch (error) {
       return thunkApi.rejectWithValue(error);
@@ -63,7 +65,6 @@ export const searchUserByUsername = createAsyncThunk(
         method: "GET",
         //   data: {email, password, name, username},
       });
-      console.log("getUserById>>", response.data);
       return response.data;
     } catch (error) {
       return thunkApi.rejectWithValue(error);
@@ -75,7 +76,7 @@ export const updateUserProfile = createAsyncThunk(
   "updateUserProfile",
   async ({email, password, name, profileImg}, thunkApi) => {
     try {
-      const token = JSON.parse(localStorage.getItem("authUser")).token
+      const token = JSON.parse(localStorage.getItem("authToken"))
       const response = await client({
         url: "/users/profile",
         method: "PUT",
@@ -99,7 +100,8 @@ export const followUser = createAsyncThunk(
   "followUser",
   async ({userIdToFollow}, thunkApi) => {
     try {
-      const token = JSON.parse(localStorage.getItem("authUser")).token
+      const token = JSON.parse(localStorage.getItem("authToken"))
+      const id = JSON.parse(localStorage.getItem("mainUser"))._id
       const response = await client({
         url: "/users/follow",
         method: "PUT",
@@ -110,9 +112,10 @@ export const followUser = createAsyncThunk(
         data: {userIdToFollow},
       });
       console.log("followUser response:", response.data);
+      // thunkApi.dispatch(getUserById({id}))
       return response.data;
     } catch (error) {
-      return thunkApi.rejectWithValue(error);
+      return thunkApi.rejectWithValue(error.response.data);
     }
   }
 );
@@ -121,7 +124,8 @@ export const unfollowUser = createAsyncThunk(
   "unfollowUser",
   async ({userIdToUnfollow}, thunkApi) => {
     try {
-      const token = JSON.parse(localStorage.getItem("authUser")).token
+      const token = JSON.parse(localStorage.getItem("authToken"))
+      const id = JSON.parse(localStorage.getItem("mainUser"))._id
       const response = await client({
         url: "/users/unfollow",
         method: "PUT",
@@ -132,9 +136,11 @@ export const unfollowUser = createAsyncThunk(
         data: {userIdToUnfollow},
       });
       console.log("userIdToUnfollow response:", response.data);
+      // thunkApi.dispatch(getUserById({id}))
       return response.data;
     } catch (error) {
-      return thunkApi.rejectWithValue(error);
+      console.log("unfollowUser API>>>>",error.response.data)
+      return thunkApi.rejectWithValue(error.response.data);
     }
   }
 );

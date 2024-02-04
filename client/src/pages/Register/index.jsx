@@ -41,7 +41,6 @@ const Register = () => {
     validationSchema: validationSchema,
     onSubmit: (values) => {
       const { email, password, name, username } = values;
-      console.log(email, password, name, username); // You can dispatch your action here
       dispatch(RegisterAPI({ email, password, name, username }));
       formik.resetForm();
     },
@@ -49,8 +48,8 @@ const Register = () => {
 
   useEffect(() => {
     if (data) {
-        console.log(data)
-      localStorage.setItem("authUser", JSON.stringify(data));
+        localStorage.setItem("authToken", JSON.stringify(data.token));
+        localStorage.setItem("mainUser", JSON.stringify(data.user));
       navigate("/home");
     } else if (error) {
       toast.error(error.message, {

@@ -9,7 +9,7 @@ router.post('/posts', authenticateUser, postController.createPost);
 // Get all posts route
 router.get('/posts', postController.getAllPosts);
 
-// Get all posts route
+// Get all posts route by the user
 router.get('/user/:id/posts', postController.getAllPostsByUser);
 
 // Get posts by id route
@@ -23,5 +23,8 @@ router.put('/posts/:id/like', authenticateUser, postController.likePost);
 
 // Add a comment to a post
 router.put('/posts/:id/comments', authenticateUser, postController.addComment);
+
+// Get posts from the users the current user follows
+router.get('/following/posts', authenticateUser, postController.getPostsFromFollowing);
 
 module.exports = router;

@@ -33,7 +33,6 @@ const Login = () => {
     validationSchema: validationSchema,
     onSubmit: (values) => {
       const { email, password } = values;
-      console.log(email, password); // You can dispatch your action here
       dispatch(LoginAPI({email, password}))
       formik.resetForm();
     },
@@ -41,7 +40,8 @@ const Login = () => {
 
   useEffect (() => {
     if (data) {
-      localStorage.setItem("authUser", JSON.stringify(data));
+      localStorage.setItem("authToken", JSON.stringify(data.token));
+      localStorage.setItem("mainUser", JSON.stringify(data.user));
       navigate("/home")
     } else if (error) {
       toast.error(error.message, {

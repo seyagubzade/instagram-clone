@@ -21,7 +21,6 @@ const authSlice = createSlice({
         state.loading = true;
       })
       .addCase(LoginAPI.rejected, (state, action) => {
-        console.log("first", action.payload)
         state.error = action.payload;
         state.loading = false;
       })
