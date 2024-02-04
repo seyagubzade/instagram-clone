@@ -51,7 +51,7 @@ const Register = () => {
     if (data) {
         console.log(data)
       localStorage.setItem("authUser", JSON.stringify(data));
-      navigate("/");
+      navigate("/home");
     } else if (error) {
       toast.error(error.message, {
         position: "top-right",
@@ -64,6 +64,7 @@ const Register = () => {
     <Content
       style={{
         padding: "0 48px",
+        minHeight:"100vh"
       }}
     >
       <Row style={{ padding: "20px" }}>

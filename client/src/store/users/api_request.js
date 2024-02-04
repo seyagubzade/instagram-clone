@@ -1,0 +1,140 @@
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import { client } from "../../client";
+import { LoginAPI } from "../auth/api_request";
+
+export const getAllUsers = createAsyncThunk(
+  "getAllUsers",
+  async (_, thunkApi) => {
+    try {
+      const response = await client({
+        url: "/users",
+        method: "GET",
+        //   data: {email, password, name, username},
+      });
+      console.log("RegisterAPI>>", response.data);
+      return response.data;
+      // return thunkApi.dispatch(LoginAPI({email,password}));
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
+  }
+);
+
+export const getUserById = createAsyncThunk(
+  "getUserById",
+  async ({ id }, thunkApi) => {
+    try {
+      const response = await client({
+        url: `/users/${id}`,
+        method: "GET",
+        //   data: {email, password, name, username},
+      });
+      console.log("getUserById>>", response.data);
+      return response.data;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error.data);
+    }
+  }
+);
+
+export const deleteUser = createAsyncThunk(
+  "deleteUser",
+  async ({ id }, thunkApi) => {
+    try {
+      const response = await client({
+        url: `/users/${id}`,
+        method: "DELETE",
+        //   data: {email, password, name, username},
+      });
+      console.log("getUserById>>", response.data);
+      return response.data;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
+  }
+);
+
+export const searchUserByUsername = createAsyncThunk(
+  "searchUserByUsername",
+  async ({ username }, thunkApi) => {
+    try {
+      const response = await client({
+        url: `/users/search/${username}`,
+        method: "GET",
+        //   data: {email, password, name, username},
+      });
+      console.log("getUserById>>", response.data);
+      return response.data;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
+  }
+);
+
+export const updateUserProfile = createAsyncThunk(
+  "updateUserProfile",
+  async ({email, password, name, profileImg}, thunkApi) => {
+    try {
+      const token = JSON.parse(localStorage.getItem("authUser")).token
+      const response = await client({
+        url: "/users/profile",
+        method: "PUT",
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+        data: {email, password, name, profileImg},
+      });
+      console.log("updateUserProfile response:", response.data);
+      return response.data;
+    // const {resEmail, resPassword}  = 
+    //   return thunkApi.dispatch(LoginAPI(response.data.user._id));
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
+  }
+);
+
+export const followUser = createAsyncThunk(
+  "followUser",
+  async ({userIdToFollow}, thunkApi) => {
+    try {
+      const token = JSON.parse(localStorage.getItem("authUser")).token
+      const response = await client({
+        url: "/users/follow",
+        method: "PUT",
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+        data: {userIdToFollow},
+      });
+      console.log("followUser response:", response.data);
+      return response.data;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
+  }
+);
+
+export const unfollowUser = createAsyncThunk(
+  "unfollowUser",
+  async ({userIdToUnfollow}, thunkApi) => {
+    try {
+      const token = JSON.parse(localStorage.getItem("authUser")).token
+      const response = await client({
+        url: "/users/unfollow",
+        method: "PUT",
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+        data: {userIdToUnfollow},
+      });
+      console.log("userIdToUnfollow response:", response.data);
+      return response.data;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
+  }
+);

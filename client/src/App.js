@@ -3,7 +3,7 @@ import { Fragment } from "react";
 import PrivateRoutes from "./utils/PrivateRoutes";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import { Route, Routes } from "react-router";
+import { Navigate, Route, Routes, useLocation, useNavigate } from "react-router";
 import Dashboard from "./pages/Dashboard";
 import Home from "./pages/Dashboard/Home";
 import Notifications from "./pages/Dashboard/Notifications";
@@ -22,7 +22,8 @@ function App() {
         <Routes>
           <Route element={<PrivateRoutes />}>
             <Route element={<Dashboard />} path="/" >
-              <Route element={<Home />} path="/" />
+              <Route path="/" element={<Navigate to="/home" />} />
+              <Route element={<Home />} path="home" />
               <Route element={<Notifications />} path="notifications" />
               <Route element={<Chats />} path="messages" />
               <Route element={<Profile />} path="profile/:id" />

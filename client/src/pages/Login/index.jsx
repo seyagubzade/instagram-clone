@@ -42,7 +42,7 @@ const Login = () => {
   useEffect (() => {
     if (data) {
       localStorage.setItem("authUser", JSON.stringify(data));
-      navigate("/")
+      navigate("/home")
     } else if (error) {
       toast.error(error.message, {
         position: "top-right",
@@ -55,6 +55,7 @@ const Login = () => {
     <Content
       style={{
         padding: "0 48px",
+        minHeight:"100vh"
       }}
     >
       <Row style={{ padding: "20px" }}>

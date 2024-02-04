@@ -1,6 +1,5 @@
-// Dashboard.js
 import { Layout, Menu } from "antd";
-import { Link, Outlet, Route, Routes } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import Notifications from "./Notifications";
 import Chats from "./Chats";
 import Home from "./Home";
@@ -13,45 +12,55 @@ const { Sider, Content } = Layout;
 
 const Dashboard = () => {
   const { isAuthenticated, setIsAuthenticated, userData } = useAuth();
+  const location = useLocation();
 
   const sideBarData = [
     {
+      key: "home",
       name: "Home",
-      path: "/",
+      path: "/home",
       icon: "home",
     },
     {
+      key: "explore",
       name: "Explore",
       path: "/explore",
       icon: "search",
     },
     {
+      key: "messages",
       name: "Messages",
       path: "/messages",
       icon: "message",
     },
     {
+      key: "notifications",
       name: "Notifications",
       path: "/notifications",
       icon: "notification",
     },
     {
+      key: "create",
       name: "Create",
       path: "/create",
       icon: "plus",
     },
     {
+      key: "profile",
       name: "Profile",
       path: `/profile/${userData?._id}`,
       icon: "avatar",
     },
   ];
 
-  return (
+  const defaultSelectedKey = sideBarData.find((data) => location.pathname.includes(data.key))?.key || "/";
+
+  return ( 
     <StyledWrapper>
       <Layout style={{ minHeight: "100vh" }}>
         <Sider
-         trigger={null} collapsible
+          trigger={null}
+          collapsible
           width={200}
           style={{
             background: "#000",
@@ -71,7 +80,7 @@ const Dashboard = () => {
           </div>
           <Menu
             mode="inline"
-            defaultSelectedKeys={["1"]}
+            defaultSelectedKeys={[defaultSelectedKey]}
             style={{
               height: "100%",
               borderRight: 0,
@@ -80,7 +89,7 @@ const Dashboard = () => {
             }}
           >
             {sideBarData.map((data, index) => (
-              <Menu.Item key={index}>
+              <Menu.Item key={data.key}>
                 <Link to={data.path}>
                   <Icon name={data.icon} />
                   {data.name}
@@ -121,7 +130,7 @@ const StyledWrapper = styled.div`
       gap: 8px;
     }
   }
-  .ant-menu-light .ant-menu-item-selected{
+  .ant-menu-light .ant-menu-item-selected {
     background-color: rgba(255, 255, 255, 0.25);
     color: #fff;
   }
