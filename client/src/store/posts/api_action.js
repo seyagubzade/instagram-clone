@@ -18,6 +18,23 @@ export const getAllPostsByUser = createAsyncThunk(
     }
   }
 );
+export const getPostById = createAsyncThunk(
+  "getPostById",
+  async ({ id }, thunkApi) => {
+    try {
+      const response = await client({
+        url: `/posts/${id}`,
+        method: "GET",
+        //   data: {email, password, name, username},
+      });
+      console.log("getAllPostsByUser>>", response.data);
+      return response.data;
+      // return thunkApi.dispatch(LoginAPI({email,password}));
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
+  }
+);
 export const getAllPosts = createAsyncThunk(
   "getAllPosts",
   async (_, thunkApi) => {
@@ -49,6 +66,8 @@ export const addComment = createAsyncThunk(
       });
       
       console.log("addComment>>", response.data);
+      thunkApi.dispatch(getPostById({id}));
+
       return response.data;
     } catch (error) {
       return thunkApi.rejectWithValue(error);
@@ -71,6 +90,7 @@ export const likePost = createAsyncThunk(
       });
       
       console.log("likePost>>", response.data);
+      thunkApi.dispatch(getPostById({id}));
       return response.data;
     } catch (error) {
       return thunkApi.rejectWithValue(error.response.data);

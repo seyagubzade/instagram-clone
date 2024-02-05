@@ -32,7 +32,7 @@ const { Title, Text } = Typography;
 
 const Profile = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalItem, setModalItem] = useState(null);
+  const [modalItemId, setModalItemId] = useState(null);
   const { mainUserId } = useAuth();
   const [userData, setUserData] = useState(
     JSON.parse(localStorage.getItem("mainUser")) || null
@@ -68,7 +68,8 @@ const Profile = () => {
   };
 
   const showModal = (post) => {
-    setModalItem(post);
+    console.log(post)
+    setModalItemId(post._id);
     setIsModalOpen(true);
   };
   const handleOk = () => {
@@ -206,7 +207,7 @@ const Profile = () => {
           footer={null}
           width={"70%"}
         >
-          <PostModalContent modalItem={modalItem} username={userData.username} id={mainUserId} trackUpdate={trackUpdate} setTrackUpdate={setTrackUpdate}/>
+          <PostModalContent modalItemId={modalItemId} username={userData.username} id={mainUserId} trackUpdate={trackUpdate} setTrackUpdate={setTrackUpdate}/>
         </Modal>
       </ConfigProvider>
     </Container>

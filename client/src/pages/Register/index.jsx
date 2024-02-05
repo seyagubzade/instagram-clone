@@ -67,14 +67,14 @@ const Register = () => {
       }}
     >
       <Row style={{ padding: "20px" }}>
-        <Col xs={24} md={12}>
+        <Col xs={{ span: 24, order: 2 }} md={{ span: 12, order: 2 }}>
           <img
             src="https://media.gcflearnfree.org/content/633d944b3823fb02e84dce55_10_05_2022/Screen%20Shot%202022-10-10%20at%202.28.19%20PM.png"
             alt="Login"
             style={{ maxWidth: "100%" }}
           />
         </Col>
-        <Col xs={24} md={12}>
+        <Col xs={{ span: 24, order: 1 }} md={{ span: 12, order: 2 }}>
           <StyledForm>
             <form
               name="normal_login"
