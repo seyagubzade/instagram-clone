@@ -1,6 +1,6 @@
 import { Button, Col, Input, Modal, Row, Spin } from "antd";
 import { useFormik } from "formik";
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import styled from "styled-components";
 import * as Yup from "yup";
 import Icon from "../../assets/icons";
@@ -8,8 +8,10 @@ import {
   addComment,
   getPostById,
   likePost,
+  unLikePost,
 } from "../../store/posts/api_action";
 import { useDispatch, useSelector } from "react-redux";
+import LoadingSpinner from "../LoadingSpinner";
 
 const PostModalContent = ({
   modalItemId,
@@ -19,16 +21,20 @@ const PostModalContent = ({
 }) => {
   const dispatch = useDispatch();
   const { currentPost, loading } = useSelector((state) => state.post);
+  const [userData, setUserData] = useState(
+    JSON.parse(localStorage.getItem("mainUser")) || null
+  );
   const formik = useFormik({
     initialValues: {
       text: "",
     },
     onSubmit: (values) => {
       const { text } = values;
-      // const { _id } = modalItem;
-      dispatch(addComment({ text, username, id: modalItemId }));
-      setTrackUpdate(!trackUpdate);
-      formik.resetForm();
+      dispatch(addComment({ text, username, id: modalItemId })).then(() => {
+        dispatch(getPostById({ id: modalItemId }));
+        setTrackUpdate(!trackUpdate);
+        formik.resetForm();
+      });
     },
   });
 
@@ -38,15 +44,16 @@ const PostModalContent = ({
 
   return (
     <ModalContentContainer>
-      <Row gutter={[16, 16]}>
+      <Row gutter={[16, 16]} style={{ width: "100%" }}>
         {loading ? (
-          <Spin />
-        ) : (
+          <LoadingSpinner />
+        ) : currentPost ? (
           <Fragment>
             <Col xs={{ span: 24 }} md={{ span: 12 }}>
               <ModalImage
                 src={currentPost?.imageURL}
                 alt={currentPost?.caption}
+                style={{ objectFit: "contain" }}
               />
             </Col>
             <Col xs={{ span: 24 }} md={{ span: 12 }}>
@@ -78,12 +85,27 @@ const PostModalContent = ({
                         color: "#fff",
                       }}
                       onClick={() => {
-                        const id = currentPost?._id;
-                        dispatch(likePost({ username, id }));
-                        setTrackUpdate(!trackUpdate);
+                        const id = currentPost._id;
+                        if (currentPost?.likes.includes(userData._id)) {
+                          console.log(true);
+                          dispatch(unLikePost({ username, id })).then(() => {
+                            dispatch(getPostById({ id: modalItemId }));
+                          });
+                        } else {
+                          console.log(true);
+                          dispatch(likePost({ username, id })).then(() => {
+                            dispatch(getPostById({ id: modalItemId }));
+                          });
+                        }
                       }}
                     >
-                      <Icon name={"notification"} /> {currentPost?.likes.length}
+                      {/* {userData._id} */}
+                      {currentPost?.likes.includes(userData._id) ? (
+                        <Icon name={"filledHeart"} />
+                      ) : (
+                        <Icon name={"notification"} />
+                      )}
+                      {currentPost.likes.length}
                     </button>{" "}
                     <button
                       style={{
@@ -95,7 +117,7 @@ const PostModalContent = ({
                       }}
                     >
                       <Icon name={"comment"} />
-                      {currentPost?.comments.length}
+                      {currentPost.comments.length}
                     </button>
                   </LikesComments>
                   <CommentsList>
@@ -139,7 +161,7 @@ const PostModalContent = ({
               </ModalDetails>
             </Col>
           </Fragment>
-        )}
+        ) : null}
       </Row>
     </ModalContentContainer>
   );

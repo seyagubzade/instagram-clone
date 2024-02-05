@@ -50,6 +50,30 @@ export const getAllPosts = createAsyncThunk(
     }
   }
 );
+
+export const getPostsFromFollowing = createAsyncThunk(
+  "getPostsFromFollowing",
+  async (_, thunkApi) => {
+    const token = JSON.parse(localStorage.getItem("authToken"));
+    try {
+      const response = await client({
+        url: `/following/posts`,
+        method: "GET",
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      });
+      
+      console.log("getPostsFromFollowing>>", response.data);
+
+      return response.data;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
+  }
+);
+
 export const addComment = createAsyncThunk(
   "addComment",
   async ({ text, username, id }, thunkApi) => {
@@ -81,6 +105,29 @@ export const likePost = createAsyncThunk(
     try {
       const response = await client({
         url: `/posts/${id}/like`,
+        method: "PUT",
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+        data: { username },
+      });
+      
+      console.log("likePost>>", response.data);
+      thunkApi.dispatch(getPostById({id}));
+      return response.data;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error.response.data);
+    }
+  }
+);
+export const unLikePost = createAsyncThunk(
+  "unLikePost",
+  async ({ username, id }, thunkApi) => {
+    const token = JSON.parse(localStorage.getItem("authToken"));
+    try {
+      const response = await client({
+        url: `/posts/${id}/unlike`,
         method: "PUT",
         headers: {
           Authorization: token,

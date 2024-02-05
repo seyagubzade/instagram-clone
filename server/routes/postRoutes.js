@@ -21,6 +21,9 @@ router.delete('/posts/:id', postController.deletePostById);
 // Like a post
 router.put('/posts/:id/like', authenticateUser, postController.likePost);
 
+// Like a post
+router.put('/posts/:id/unlike', authenticateUser, postController.unlikePost);
+
 // Add a comment to a post
 router.put('/posts/:id/comments', authenticateUser, postController.addComment);
 

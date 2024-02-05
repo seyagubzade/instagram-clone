@@ -2,8 +2,13 @@ import React, { useEffect, useState } from "react";
 import {
   Avatar,
   Button,
+  Card,
+  Col,
+  ConfigProvider,
   Divider,
   Empty,
+  Modal,
+  Row,
   Skeleton,
   Space,
   Typography,
@@ -17,100 +22,214 @@ import {
   unfollowUser,
 } from "../../../store/users/api_request";
 import { useNavigate, useParams } from "react-router";
+import { getAllPostsByUser } from "../../../store/posts/api_action";
+import Meta from "antd/es/card/Meta";
+import { Link } from "react-router-dom";
+import PostModalContent from "../../../components/PostModalContent";
 
 const { Title, Text } = Typography;
 
 const OtherProfile = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalItemId, setModalItemId] = useState(null);
   const { mainUserId } = useAuth();
+  const [trackUpdate, setTrackUpdate] = useState(false);
   const [mainUserData, setMainUserData] = useState(
     JSON.parse(localStorage.getItem("mainUser")) || null
   );
   const [doesFollow, setDoesFollow] = useState(false);
   const dispatch = useDispatch();
   const { id } = useParams();
+  const [userData, setUserData] = useState(
+    JSON.parse(localStorage.getItem("mainUser")) || null
+  );
+
   const { currentData, loading, error } = useSelector((state) => state.user);
+  const {
+    posts,
+    loading: postLoading,
+    error: PostError,
+  } = useSelector((state) => state.post);
+
   const navigate = useNavigate();
   useEffect(() => {
     dispatch(getUserById({ id }));
-  }, [id]);
+    dispatch(getAllPostsByUser({ id }));
+  }, [id, dispatch]);
 
   useEffect(() => {
-    if (currentData) {
-      if (currentData._id === mainUserId) {
-        navigate(`/profile/${mainUserId}`);
-      } else {
-        const target = mainUserData.following?.find(
-          (userId) => userId == currentData?._id
-        );
-        if (target) {
-          setDoesFollow(true);
-        }
-      }
-    }
-  }, [currentData]);
+    // if (currentData) {
+    //   if (currentData._id === mainUserData._id) {
+    //     // navigate(`/profile/${mainUserData._id}`);
+    //   } else {
+    //     const target = mainUserData.following?.find(
+    //       (userId) => userId == currentData?._id
+    //     );
+    //     if (target) {
+    //       setDoesFollow(true);
+    //     }
+    //   }
+    // }
+  }, [currentData, dispatch, mainUserData]);
 
   const followHandle = () => {
-    // clg
     const userIdToFollow = currentData._id;
-    dispatch(followUser({ userIdToFollow}));
+    dispatch(followUser({ userIdToFollow })).then(() => {
+      dispatch(getUserById({ id }));
+      setDoesFollow(true);
+    });
   };
 
   const unfollowHandle = () => {
-    const userIdToUnfollow = currentData._id
-    dispatch(unfollowUser({ userIdToUnfollow }));
+    const userIdToUnfollow = currentData._id;
+    dispatch(unfollowUser({ userIdToUnfollow })).then(() => {
+      dispatch(getUserById({ id }));
+      setDoesFollow(false);
+    });
+  };
+
+  const showModal = (post) => {
+    console.log(post);
+    setModalItemId(post._id);
+    setIsModalOpen(true);
+  };
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+  const handleCancel = () => {
+    setIsModalOpen(false);
   };
 
   return (
     <Container>
-      {loading ? (
-        <Skeleton
-          avatar
-          paragraph={{
-            rows: 4,
-          }}
-        />
-      ) : currentData ? (
-        <StyledProfileWrapper>
-          <ProfileHeader>
-            <Space>
-              <Avatar size={100} src={currentData.profileImg} />
-              <Space direction="vertical" size="small">
-                <Title level={4}>{currentData.username}</Title>
-                <Text>{currentData.name}</Text>
-                <Space direction="horizontal" size="small">
-                  <Title level={5}>{currentData?.posts?.length} Posts</Title>
-                  <Title level={5}>
-                    {currentData?.followers?.length} Followers
-                  </Title>
-                  <Title level={5}>
-                    {currentData?.following?.length} Following
-                  </Title>
+      <ConfigProvider
+        theme={{
+          components: {
+            Modal: {
+              contentBg: "#000",
+              borderRadius: "0",
+              padding: "0",
+              style: {
+                backgroundColor: "#000!important",
+                color: "#fff",
+              },
+            },
+          },
+        }}
+      >
+        {loading ? (
+          <Skeleton
+            avatar
+            paragraph={{
+              rows: 4,
+            }}
+          />
+        ) : currentData ? (
+          <StyledProfileWrapper>
+            <ProfileHeader>
+              <Space>
+                <Avatar size={100} src={currentData.profileImg} />
+                <Space direction="vertical" size="small">
+                  <Title level={4}>{currentData.username}</Title>
+                  <Text>{currentData.name}</Text>
+                  <Space direction="horizontal" size="small">
+                    <Title level={5}>{currentData?.posts?.length} Posts</Title>
+                    <Title level={5}>
+                      {currentData?.followers?.length} Followers
+                    </Title>
+                    <Title level={5}>
+                      {currentData?.following?.length} Following
+                    </Title>
+                  </Space>
                 </Space>
               </Space>
-            </Space>
-            <Space></Space>
-          </ProfileHeader>
-          <ProfileActions>
-            {!doesFollow && (
-              <Button type="primary" onClick={followHandle}>
-                Follow
-              </Button>
-            )}
-            {doesFollow && (
-              <Button type="primary" onClick={unfollowHandle}>
-                Unfollow
-              </Button>
-            )}
-            <Button type="primary">Message</Button>
-          </ProfileActions>
+              <Space></Space>
+            </ProfileHeader>
+            <ProfileActions>
+              {!currentData?.followers?.includes(mainUserId) && (
+                <Button type="primary" onClick={followHandle}>
+                  Follow
+                </Button>
+              )}
+              {currentData?.followers?.includes(mainUserId) && (
+                <Button type="primary" onClick={unfollowHandle}>
+                  Unfollow
+                </Button>
+              )}
+              <Button type="primary">Message</Button>
+            </ProfileActions>
 
-          <Divider />
-        </StyledProfileWrapper>
-      ) : (
-        <Space>
-          <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-        </Space>
-      )}
+            <Divider />
+            <PostsContainer>
+              <Title level={4}>Posts</Title>
+              <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
+                {loading ? (
+                  <Card style={{ width: 300, marginTop: 16 }} loading={true}>
+                    <Skeleton loading={true} active avatar>
+                      <Meta
+                        avatar={
+                          <Skeleton.Avatar active size="large" shape="square" />
+                        }
+                        title={<Skeleton.Input style={{ width: 200 }} active />}
+                        description={<Skeleton active />}
+                      />
+                      <Skeleton.Image style={{ width: "100%" }} />
+                    </Skeleton>
+                  </Card>
+                ) : posts ? (
+                  [...posts].reverse().map((post, index) => (
+                    <Col
+                      key={index}
+                      xs={{ span: 12 }}
+                      md={{ span: 8 }}
+                      lg={{ span: 8 }}
+                      xl={{ span: 8 }}
+                      style={{ maxHeight: "300px", minHeight: "150px" }}
+                    >
+                      {/* {post.caption} */}
+                      <Link onClick={() => showModal(post)}>
+                        <img
+                          src={post.imageURL}
+                          alt=""
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                          }}
+                        />
+                      </Link>
+                    </Col>
+                  ))
+                ) : (
+                  ""
+                )}
+              </Row>
+            </PostsContainer>
+          </StyledProfileWrapper>
+        ) : (
+          <Space>
+            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+          </Space>
+        )}
+
+        <Modal
+          // title="Basic Modal"
+          open={isModalOpen}
+          onOk={handleOk}
+          onCancel={handleCancel}
+          footer={null}
+          width={"70%"}
+          // style={{background: }}
+        >
+          <PostModalContent
+            modalItemId={modalItemId}
+            username={userData.username}
+            id={mainUserId}
+            trackUpdate={trackUpdate}
+            setTrackUpdate={setTrackUpdate}
+          />
+        </Modal>
+      </ConfigProvider>
     </Container>
   );
 };
@@ -136,9 +255,14 @@ const Container = styled.div`
     color: rgba(255, 255, 255, 0.4) !important;
     height: 2px;
   }
+  .ant-modal-content {
+    background-color: #000;
+  }
 `;
 
 const StyledProfileWrapper = styled.div``;
+
+const PostsContainer = styled.div``;
 
 const ProfileHeader = styled.div`
   display: flex;

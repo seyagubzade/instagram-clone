@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import toast from "react-hot-toast";
-import { addComment, createPost, getAllPosts, getAllPostsByUser, getPostById, likePost } from "./api_action";
+import { addComment, createPost, getAllPosts, getAllPostsByUser, getPostById, getPostsFromFollowing, likePost, unLikePost } from "./api_action";
 
 const postSlice = createSlice({
   name: "userSlice",
@@ -10,6 +10,7 @@ const postSlice = createSlice({
     error: null,
     message:null,
     currentPost: null,
+    followingPosts:[]
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -27,6 +28,20 @@ const postSlice = createSlice({
         state.loading = false;
         toast.error(state.error)
       })
+    // getPostsFromFollowing
+      .addCase(getPostsFromFollowing.fulfilled, (state, action) => {
+        state.followingPosts = action.payload;
+        state.loading = false;
+      })
+      .addCase(getPostsFromFollowing.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(getPostsFromFollowing.rejected, (state, action) => {
+        state.error = action.payload;
+        state.loading = false;
+        toast.error(state.error)
+      })
+
     // getAllPostsByUser
       .addCase(getPostById.fulfilled, (state, action) => {
         state.currentPost = action.payload;
@@ -80,6 +95,20 @@ const postSlice = createSlice({
         state.loading = true;
       })
       .addCase(likePost.rejected, (state, action) => {
+        // state.error = action.payload;
+        state.loading = false;
+        toast.error(action.payload.message)
+      })
+    // unLikePost
+      .addCase(unLikePost.fulfilled, (state, action) => {
+        // state.posts = action.payload;
+        state.loading = false;
+        toast.success(action.payload.message)
+      })
+      .addCase(unLikePost.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(unLikePost.rejected, (state, action) => {
         // state.error = action.payload;
         state.loading = false;
         toast.error(action.payload.message)

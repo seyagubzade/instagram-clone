@@ -104,10 +104,6 @@ const Profile = () => {
               rows: 4,
             }}
           />
-        ) : error ? (
-          <Space>
-            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-          </Space>
         ) : currentData ? (
           <StyledProfileWrapper>
             <ProfileHeader>

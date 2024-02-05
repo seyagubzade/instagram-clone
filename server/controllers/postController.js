@@ -136,6 +136,37 @@ exports.likePost = async (req, res) => {
   }
 };
 
+// Unlike a Post
+exports.unlikePost = async (req, res) => {
+  const postId = req.params.id;
+  const userId = req.user.userId; // Assuming you attach userId to the request object after authentication
+
+  try {
+    // Find the post by ID
+    const post = await Post.findById(postId);
+
+    // Check if the post exists
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    // Check if the user has liked the post
+    if (!post.likes.includes(userId)) {
+      return res.status(400).json({ message: "Post not liked by the user" });
+    }
+
+    // Remove the user's ID from the likes array
+    post.likes = post.likes.filter((like) => like.toString() !== userId);
+    await post.save();
+
+    res.json({ message: "Post unliked successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
 // Add a Comment
 exports.addComment = async (req, res) => {
   const postId = req.params.id;
@@ -182,7 +213,10 @@ exports.getPostsFromFollowing = async (req, res) => {
 
     // Find all posts from users the current user follows
     const postsFromFollowing = await Post.find({ author: { $in: followingIds } })
-      .populate('author', 'name')
+      .populate({
+        path: 'author',
+        select: 'name username profileImg', // Select the fields you want to populate
+      })
       .populate('comments.author', 'name');
 
     res.json(postsFromFollowing);

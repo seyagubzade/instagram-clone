@@ -67,7 +67,7 @@ const Dashboard = () => {
   }, [isTabletOrMobile]);
   return (
     <StyledWrapper>
-      <Layout style={{ minHeight: "100vh" }}>
+      <Layout style={{ minHeight: "100vh", background:"#000" }}>
         <Sider
           trigger={null}
           collapsible
@@ -84,10 +84,6 @@ const Dashboard = () => {
           }}
         >
           <div className="logo">
-            {/* <img
-              src="https://www.pngkey.com/png/full/28-287308_instagram-logo-text-white.png"
-              alt=""
-            /> */}
             {isCollapsed ? <Icon name={"igIcon"} /> : <Icon name={"igText"} />}
           </div>
           <Menu
@@ -135,7 +131,9 @@ const Dashboard = () => {
               }}
               onClick={() => setIsCollapsed(!isCollapsed)}
             >
-              <Icon name={"hamburger"} />
+              {
+                isCollapsed ? <Icon name={"doubleRight"} /> : <Icon name={"doubleLeft"}/>
+              }
             </Button>
           </Menu>
         </Sider>
@@ -179,7 +177,7 @@ const StyledWrapper = styled.div`
     }
   }
   .ant-menu-light .ant-menu-item-selected {
-    background-color: rgba(255, 255, 255, 0.25);
+    background-color: rgba(255, 255, 255, 0.20);
     color: #fff;
   }
   .ant-layout-sider-children {
