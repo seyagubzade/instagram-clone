@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import {
   Avatar,
   Button,
@@ -26,6 +26,7 @@ import { getAllPostsByUser } from "../../../store/posts/api_action";
 import Meta from "antd/es/card/Meta";
 import { Link } from "react-router-dom";
 import PostModalContent from "../../../components/PostModalContent";
+import LoadingSkeleton from "../../../components/LoadingSkeleton";
 
 const { Title, Text } = Typography;
 
@@ -117,13 +118,10 @@ const OtherProfile = () => {
           },
         }}
       >
+
+        
         {loading ? (
-          <Skeleton
-            avatar
-            paragraph={{
-              rows: 4,
-            }}
-          />
+          null
         ) : currentData ? (
           <StyledProfileWrapper>
             <ProfileHeader>
@@ -163,19 +161,12 @@ const OtherProfile = () => {
             <PostsContainer>
               <Title level={4}>Posts</Title>
               <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
-                {loading ? (
-                  <Card style={{ width: 300, marginTop: 16 }} loading={true}>
-                    <Skeleton loading={true} active avatar>
-                      <Meta
-                        avatar={
-                          <Skeleton.Avatar active size="large" shape="square" />
-                        }
-                        title={<Skeleton.Input style={{ width: 200 }} active />}
-                        description={<Skeleton active />}
-                      />
-                      <Skeleton.Image style={{ width: "100%" }} />
-                    </Skeleton>
-                  </Card>
+                {postLoading ? (
+                  <Fragment>
+                    <LoadingSkeleton />
+                    <LoadingSkeleton />
+                    <LoadingSkeleton />
+                  </Fragment>
                 ) : posts ? (
                   [...posts].reverse().map((post, index) => (
                     <Col
@@ -206,11 +197,13 @@ const OtherProfile = () => {
               </Row>
             </PostsContainer>
           </StyledProfileWrapper>
-        ) : (
-          <Space>
-            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-          </Space>
-        )}
+        ) : 
+        // (
+        //   <Space>
+        //     <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+        //   </Space>
+        // )
+        null}
 
         <Modal
           // title="Basic Modal"
@@ -258,6 +251,10 @@ const Container = styled.div`
   .ant-modal-content {
     background-color: #000;
   }
+  .code-box .code-box-demo {
+    background-color: #3c3c3c;
+    border-radius: 8px 8px 0 0;
+}
 `;
 
 const StyledProfileWrapper = styled.div``;

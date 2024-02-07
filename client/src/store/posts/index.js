@@ -1,11 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 import toast from "react-hot-toast";
-import { addComment, createPost, getAllPosts, getAllPostsByUser, getPostById, getPostsFromFollowing, likePost, unLikePost } from "./api_action";
+import { addComment, createPost, deletePostById, getAllPosts, getAllPostsByUser, getPostById, getPostsFromFollowing, likePost, unLikePost } from "./api_action";
 
 const postSlice = createSlice({
   name: "userSlice",
   initialState: {
-    posts: null,
+    posts: [],
     loading: false,
     error: null,
     message:null,
@@ -52,6 +52,21 @@ const postSlice = createSlice({
         state.currentPost = null;
       })
       .addCase(getPostById.rejected, (state, action) => {
+        state.error = action.payload;
+        state.loading = false;
+        toast.error(state.error)
+      })
+    // deletePostById
+      .addCase(deletePostById.fulfilled, (state, action) => {
+        // state.currentPost = action.payload;
+        state.loading = false;
+        toast.success(action.payload.message)
+      })
+      .addCase(deletePostById.pending, (state, action) => {
+        state.loading = true;
+        state.currentPost = null;
+      })
+      .addCase(deletePostById.rejected, (state, action) => {
         state.error = action.payload;
         state.loading = false;
         toast.error(state.error)

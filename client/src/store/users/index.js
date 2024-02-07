@@ -71,6 +71,7 @@ const userSlice = createSlice({
       })
     // updateUserProfile
       .addCase(updateUserProfile.fulfilled, (state, action) => {
+        console.log("updateUserProfile.fulfilled>>>>>>> ",action.payload)
         state.currentData = action.payload.user;
         state.loading = false;
         toast.success(action.payload.message)

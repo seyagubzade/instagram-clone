@@ -6,24 +6,31 @@ import * as Yup from "yup";
 import Icon from "../../assets/icons";
 import {
   addComment,
+  deletePostById,
   getPostById,
   likePost,
   unLikePost,
 } from "../../store/posts/api_action";
 import { useDispatch, useSelector } from "react-redux";
 import LoadingSpinner from "../LoadingSpinner";
+import { ExclamationCircleFilled, DeleteOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router";
+import { getUserById } from "../../store/users/api_request";
+const { confirm } = Modal;
 
 const PostModalContent = ({
   modalItemId,
   username,
   trackUpdate,
   setTrackUpdate,
+  setIsModalOpen,
 }) => {
   const dispatch = useDispatch();
   const { currentPost, loading } = useSelector((state) => state.post);
   const [userData, setUserData] = useState(
     JSON.parse(localStorage.getItem("mainUser")) || null
   );
+  const navigate = useNavigate();
   const formik = useFormik({
     initialValues: {
       text: "",
@@ -41,6 +48,31 @@ const PostModalContent = ({
   useEffect(() => {
     dispatch(getPostById({ id: modalItemId }));
   }, [modalItemId, dispatch]);
+
+  const showDeleteConfirm = () => {
+    confirm({
+      title: "Are you sure delete this post?",
+      icon: <ExclamationCircleFilled />,
+      content: "To delete the post, please",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      onOk() {
+        dispatch(deletePostById({ id: modalItemId })).then(() => {
+          setIsModalOpen(false);
+          navigate(`/profile/${userData._id}`);
+          setTrackUpdate(!trackUpdate);
+        });
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+      className: "delete-modal",
+      okButtonProps: {
+        className: "delete-modal",
+      },
+    });
+  };
 
   return (
     <ModalContentContainer>
@@ -64,6 +96,15 @@ const PostModalContent = ({
                       <span>{currentPost?.author.name}</span>{" "}
                       {currentPost?.caption}
                     </p>
+                    {currentPost.author._id === userData._id && (
+                      <Button
+                        onClick={showDeleteConfirm}
+                        type="dashed"
+                        className="delete-btn"
+                      >
+                        <DeleteOutlined />
+                      </Button>
+                    )}
                   </AuthorName>{" "}
                   <CreationTime>
                     {new Date(currentPost?.createdAt).toLocaleDateString(
@@ -171,6 +212,9 @@ const ModalContentContainer = styled.div`
   width: 100%;
   min-height: 60vh;
 
+  .ant-modal-confirm-body-wrapper {
+    padding: 12px !important;
+  }
   .ant-modal-content {
     position: relative;
     background-color: #000;
@@ -181,6 +225,24 @@ const ModalContentContainer = styled.div`
     pointer-events: auto;
     color: #fff;
     padding: 0;
+  }
+  .delete-btn {
+    padding: 4px 12px;
+    line-height: 1;
+    color: white;
+    background: transparent;
+    border: 1px solid white;
+    font-size: 12px;
+    font-weight: 200;
+  }
+  .ant-btn-dashed:not(:disabled):not(.ant-btn-disabled):hover {
+    color: red;
+    border-color: red;
+  }
+  .delete-modal {
+    padding: 12px !important;
+    border-radius: 12px;
+    overflow: hidden;
   }
   @media (min-width: 768px) {
     display: flex;
@@ -205,7 +267,7 @@ const ModalDetails = styled.div`
 const AuthorName = styled.div`
   margin: 20px 0 0;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 6px;
   span {
     font-size: 16px;

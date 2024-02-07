@@ -1,5 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { client } from "../../client";
+import { getUserById } from "../users/api_request";
 
 export const getAllPostsByUser = createAsyncThunk(
   "getAllPostsByUser",
@@ -64,7 +65,7 @@ export const getPostsFromFollowing = createAsyncThunk(
           "Content-Type": "application/json",
         },
       });
-      
+
       console.log("getPostsFromFollowing>>", response.data);
 
       return response.data;
@@ -88,9 +89,9 @@ export const addComment = createAsyncThunk(
         },
         data: { text, username },
       });
-      
+
       console.log("addComment>>", response.data);
-      thunkApi.dispatch(getPostById({id}));
+      thunkApi.dispatch(getPostById({ id }));
 
       return response.data;
     } catch (error) {
@@ -112,9 +113,9 @@ export const likePost = createAsyncThunk(
         },
         data: { username },
       });
-      
+
       console.log("likePost>>", response.data);
-      thunkApi.dispatch(getPostById({id}));
+      thunkApi.dispatch(getPostById({ id }));
       return response.data;
     } catch (error) {
       return thunkApi.rejectWithValue(error.response.data);
@@ -135,9 +136,9 @@ export const unLikePost = createAsyncThunk(
         },
         data: { username },
       });
-      
+
       console.log("likePost>>", response.data);
-      thunkApi.dispatch(getPostById({id}));
+      thunkApi.dispatch(getPostById({ id }));
       return response.data;
     } catch (error) {
       return thunkApi.rejectWithValue(error.response.data);
@@ -158,11 +159,30 @@ export const createPost = createAsyncThunk(
         },
         data: { imageURL, caption },
       });
-      
+
       console.log("createPost>>", response.data);
       return response.data;
     } catch (error) {
       return thunkApi.rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const deletePostById = createAsyncThunk(
+  "deletePostById",
+  async ({ id }, thunkApi) => {
+    const mainUserId = JSON.parse(localStorage.getItem("mainUser"))._id;
+    try {
+      const response = await client({
+        url: `/posts/${id}`,
+        method: "DELETE",
+      });
+      console.log("deletePostById>>", response.data);
+      thunkApi.dispatch(getUserById({ id: mainUserId }));
+      // thunkApi.dispatch(getPostById({ id: mainUserId }));
+      return response.data;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
     }
   }
 );

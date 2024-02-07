@@ -1,7 +1,7 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -9,14 +9,45 @@ body {
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
 
-.ant-modal-content{
-  padding: 0!important;
-  border-radius: 0!important;
+.ant-modal-content {
+  padding: 0 !important;
+  border-radius: 0 !important;
 }
+.ant-modal-confirm-body-wrapper {
+  padding: 12px !important;
+  border-radius: 0 !important;
+  background: #181818;
+  color: #fff;
+
+  .ant-modal-confirm-content {
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 14px;
+    line-height: 1.5714285714285714;
+  }
+  .ant-modal-confirm-title {
+    color: rgba(255, 255, 255, 0.88);
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  .ant-btn-default {
+    background: transparent;
+    border-color: #d9d9d9;
+    color: rgb(255 255 255 / 88%);
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.02);
+}
+  .ant-btn-dangerous {
+    color: #fff;
+    background: #ff4d4f;
+    border: none;
+  }
+}
+/* .ant-modal-confirm  */
 /* .ant-modal .ant-modal-content {
   position: relative;
   background-color: #000;

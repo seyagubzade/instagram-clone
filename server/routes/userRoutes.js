@@ -18,6 +18,9 @@ router.get('/users', userController.getAllUsers);
 // Get user by id route
 router.get('/users/:id', userController.getUserById);
 
+// Get user profile by token
+router.get('/users/profile/edit', authenticateUser, userController.getProfileInfo);
+
 // Update user profile route
 router.put('/users/profile', authenticateUser, userController.updateUserProfile);
 

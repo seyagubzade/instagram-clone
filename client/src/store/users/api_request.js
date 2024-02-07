@@ -74,7 +74,7 @@ export const searchUserByUsername = createAsyncThunk(
 
 export const updateUserProfile = createAsyncThunk(
   "updateUserProfile",
-  async ({email, password, name, profileImg}, thunkApi) => {
+  async ({email, password, name, username, profileImg}, thunkApi) => {
     try {
       const token = JSON.parse(localStorage.getItem("authToken"))
       const response = await client({
@@ -84,7 +84,7 @@ export const updateUserProfile = createAsyncThunk(
           Authorization: token,
           "Content-Type": "application/json",
         },
-        data: {email, password, name, profileImg},
+        data: {email, password, name, username, profileImg},
       });
       console.log("updateUserProfile response:", response.data);
       return response.data;

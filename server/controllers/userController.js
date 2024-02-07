@@ -68,7 +68,7 @@ exports.loginUser = async (req, res) => {
   }
 };
 
-// delete user 
+// delete user
 exports.deleteUser = async (req, res) => {
   const userId = req.params.id;
 
@@ -88,12 +88,11 @@ exports.deleteUser = async (req, res) => {
   }
 };
 
-
 // Get all users
 exports.getAllUsers = async (req, res) => {
   try {
     // Fetch all users from the database
-    const users = await User.find({}, '-password'); // Exclude password field from the response
+    const users = await User.find({}, "-password"); // Exclude password field from the response
     res.json(users);
   } catch (error) {
     console.error(error);
@@ -101,13 +100,13 @@ exports.getAllUsers = async (req, res) => {
   }
 };
 
-// Get user by id 
+// Get user by id
 exports.getUserById = async (req, res) => {
   const userId = req.params.id;
 
   try {
     // Find the user by ID
-    const user = await User.findById(userId).select('-password'); // Exclude password field from the response
+    const user = await User.findById(userId).select("-password"); // Exclude password field from the response
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -120,6 +119,24 @@ exports.getUserById = async (req, res) => {
   }
 };
 
+// Get profile info of authenticated user
+exports.getProfileInfo = async (req, res) => {
+  try {
+    // Find the user by ID from the authenticated user's token
+    const userId = req.user.id;
+    const user = await User.findById(userId);
+    console.log(user, userId)
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Return the user's profile information including the password
+    res.json(user);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 // Update user profile
 exports.updateUserProfile = async (req, res) => {
@@ -148,8 +165,6 @@ exports.updateUserProfile = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
-
 
 // Follow a user
 exports.followUser = async (req, res) => {
@@ -218,15 +233,19 @@ exports.searchUserByUsername = async (req, res) => {
   const { username } = req.params;
   try {
     // Search users by username (case-insensitive)
-    const users = await User.find({ username: { $regex: username, $options: 'i' } }).select('-password');
+    const users = await User.find({
+      username: { $regex: username, $options: "i" },
+    }).select("-password");
 
     if (!users || users.length === 0) {
-      return res.status(404).json({ message: 'No users found with that username' });
+      return res
+        .status(404)
+        .json({ message: "No users found with that username" });
     }
 
     res.json(users);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: "Internal server error" });
   }
 };

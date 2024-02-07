@@ -11,8 +11,8 @@ const { TextArea } = Input;
 
 const initialValues = {
   imageURL:
-    "https://media.istockphoto.com/id/642448700/photo/the-workshop-is-our-happy-place.webp?b=1&s=170667a&w=0&k=20&c=dEckRB9bGbhC_AokcQda4vfTMajd67yynM6TlZDtKFY=",
-  caption: "working hard !",
+    "https://www.rbsdirect.com.br/imagesrc/26217341.jpg?version=1575255600",
+  caption: "selling paper like there is no another day!",
 };
 
 const validationSchema = Yup.object({

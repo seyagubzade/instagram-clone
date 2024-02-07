@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import {
   Avatar,
   Button,
@@ -20,11 +20,12 @@ import {
   getUserById,
   unfollowUser,
 } from "../../../store/users/api_request";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { getAllPostsByUser } from "../../../store/posts/api_action";
 import { Card } from "antd";
 import { Link } from "react-router-dom";
 import PostModalContent from "../../../components/PostModalContent";
+import LoadingSkeleton from "../../../components/LoadingSkeleton";
 
 const { Meta } = Card;
 
@@ -34,13 +35,14 @@ const Profile = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalItemId, setModalItemId] = useState(null);
   const { mainUserId } = useAuth();
+  const navigate = useNavigate();
   const [userData, setUserData] = useState(
     JSON.parse(localStorage.getItem("mainUser")) || null
   );
   const dispatch = useDispatch();
   const { id } = useParams();
   const { currentData, loading, error } = useSelector((state) => state.user);
-  const [trackUpdate, setTrackUpdate] = useState(false)
+  const [trackUpdate, setTrackUpdate] = useState(false);
   const {
     posts,
     loading: postLoading,
@@ -68,7 +70,7 @@ const Profile = () => {
   };
 
   const showModal = (post) => {
-    console.log(post)
+    console.log(post);
     setModalItemId(post._id);
     setIsModalOpen(true);
   };
@@ -85,13 +87,12 @@ const Profile = () => {
         theme={{
           components: {
             Modal: {
-              contentBg:"#000",
+              contentBg: "#000",
               borderRadius: "0",
               padding: "0",
               style: {
-                backgroundColor: "#000\!important",
+                backgroundColor: "#000!important",
                 color: "#fff",
-                
               },
             },
           },
@@ -107,7 +108,7 @@ const Profile = () => {
         ) : currentData ? (
           <StyledProfileWrapper>
             <ProfileHeader>
-              <Space style={{flexWrap:"wrap"}}>
+              <Space style={{ flexWrap: "wrap" }}>
                 <Avatar
                   size={100}
                   src={
@@ -120,9 +121,7 @@ const Profile = () => {
                   <Title level={4}>{currentData.username}</Title>
                   <Text>{currentData.name}</Text>
                   <Space direction="horizontal" size="small">
-                    <Title level={5}>
-                      {currentData?.posts?.length} Posts
-                    </Title>
+                    <Title level={5}>{currentData?.posts?.length} Posts</Title>
                     <Title level={5}>
                       {currentData?.followers?.length} Followers
                     </Title>
@@ -132,33 +131,27 @@ const Profile = () => {
                   </Space>
                 </Space>
               </Space>
-              <Space style={{marginTop:"10px"}}>
-                <Button type="primary">Edit Profile</Button>
+              <Space style={{ marginTop: "10px" }}>
+                <Button
+                  onClick={() => {
+                    navigate(`/profile/edit/${id}`);
+                  }}
+                  type="primary"
+                >
+                  Edit Profile
+                </Button>
               </Space>
             </ProfileHeader>
             <Divider />
             <PostsContainer>
               <Title level={4}>Posts</Title>
               <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
-                {loading ? (
-                  <Card style={{ width: 300, marginTop: 16 }} loading={true}>
-                    <Skeleton loading={true} active avatar>
-                      <Meta
-                        avatar={
-                          <Skeleton.Avatar
-                            active
-                            size="large"
-                            shape="square"
-                          />
-                        }
-                        title={
-                          <Skeleton.Input style={{ width: 200 }} active />
-                        }
-                        description={<Skeleton active />}
-                      />
-                      <Skeleton.Image style={{ width: "100%" }} />
-                    </Skeleton>
-                  </Card>
+                {postLoading ? (
+                  <Fragment>
+                    <LoadingSkeleton />
+                    <LoadingSkeleton />
+                    <LoadingSkeleton />
+                  </Fragment>
                 ) : posts ? (
                   [...posts].reverse().map((post, index) => (
                     <Col
@@ -203,7 +196,14 @@ const Profile = () => {
           footer={null}
           width={"70%"}
         >
-          <PostModalContent modalItemId={modalItemId} username={userData.username} id={mainUserId} trackUpdate={trackUpdate} setTrackUpdate={setTrackUpdate}/>
+          <PostModalContent
+            modalItemId={modalItemId}
+            username={userData.username}
+            id={mainUserId}
+            trackUpdate={trackUpdate}
+            setTrackUpdate={setTrackUpdate}
+            setIsModalOpen={setIsModalOpen}
+          />
         </Modal>
       </ConfigProvider>
     </Container>
@@ -230,6 +230,17 @@ const Container = styled.div`
   .ant-divider {
     color: rgba(255, 255, 255, 0.4) !important;
     height: 2px;
+  }
+  .code-box .code-box-demo {
+    background-color: #3c3c3c;
+    border-radius: 8px 8px 0 0;
+  }
+  .ant-card {
+    color: rgba(0, 0, 0, 0.88);
+    background: #161616;
+  }
+  .ant-card-bordered {
+    border: none;
   }
 `;
 

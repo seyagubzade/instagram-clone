@@ -23,6 +23,7 @@ import { Link } from "react-router-dom";
 import OtherProfile from "./pages/Dashboard/OtherProfile";
 import NotFound from "./assets/images/NotFound.png";
 import { Button } from "antd";
+import EditProfile from "./pages/Dashboard/EditProfile";
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
               <Route element={<Chats />} path="messages" />
               <Route element={<Profile />} path="profile/:id" />
               <Route element={<OtherProfile />} path="users/:id" />
+              <Route element={<EditProfile />} path="profile/edit/:id" />
               <Route element={<Explore />} path="explore" />
               <Route element={<Create />} path="create" />
             </Route>
