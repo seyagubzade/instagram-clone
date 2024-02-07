@@ -59,7 +59,6 @@ const userSlice = createSlice({
       .addCase(searchUserByUsername.fulfilled, (state, action) => {
         state.data = action.payload;
         state.loading = false;
-        toast.success(action.payload.message)
       })
       .addCase(searchUserByUsername.pending, (state, action) => {
         state.loading = true;

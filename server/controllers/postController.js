@@ -125,6 +125,8 @@ exports.likePost = async (req, res) => {
       user: post.author,
       type: 'like',
       content: `${username} liked your post`,
+      postId: postId,
+      authorId: userId,
       read: false
     });
     await notification.save();
@@ -170,7 +172,7 @@ exports.unlikePost = async (req, res) => {
 // Add a Comment
 exports.addComment = async (req, res) => {
   const postId = req.params.id;
-  const { text,username } = req.body;
+  const { text, username } = req.body;
   const userId = req.user.userId; // Assuming you attach userId to the request object after authentication
 
   try {
@@ -191,6 +193,8 @@ exports.addComment = async (req, res) => {
       user: post.author,
       type: 'comment',
       content: `${username} commented on your post`,
+      postId: postId,
+      authorId: userId,
       read: false
     });
     await notification.save();

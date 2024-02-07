@@ -96,6 +96,21 @@ const StyledGallery = styled.div`
       height: 150px;
     }
   }
+  @media screen and (min-width: 780px) {
+    img {
+      height: 200px;
+    }
+  }
+  @media screen and (min-width: 920px) {
+    img {
+      height: 250px;
+    }
+  }
+  @media screen and (min-width: 992px) {
+    img {
+      height: 150px;
+    }
+  }
   @media screen and (min-width: 1320px) {
     img {
       height: 250px;

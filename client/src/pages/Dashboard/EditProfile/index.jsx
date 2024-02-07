@@ -148,6 +148,7 @@ const EditProfile = () => {
             value={formik.values.email}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
+            readOnly
           />
         </Form.Item>
         <Form.Item
@@ -170,7 +171,7 @@ const EditProfile = () => {
         </Form.Item>
         <Form.Item>
           <Button type="primary" htmlType="submit">
-            Submit
+            Save Changes
           </Button>
         </Form.Item>
       </Form>

@@ -126,7 +126,7 @@ const OtherProfile = () => {
           <StyledProfileWrapper>
             <ProfileHeader>
               <Space>
-                <Avatar size={100} src={currentData.profileImg} />
+                <Avatar size={100} src={currentData.profileImg || "https://img.myloview.com/stickers/default-avatar-profile-icon-vector-social-media-user-photo-700-205577532.jpg"} />
                 <Space direction="vertical" size="small">
                   <Title level={4}>{currentData.username}</Title>
                   <Text>{currentData.name}</Text>
@@ -144,12 +144,12 @@ const OtherProfile = () => {
               <Space></Space>
             </ProfileHeader>
             <ProfileActions>
-              {!currentData?.followers?.includes(mainUserId) && (
+              {!currentData?.followers?.includes(userData._id) && (
                 <Button type="primary" onClick={followHandle}>
                   Follow
                 </Button>
               )}
-              {currentData?.followers?.includes(mainUserId) && (
+              {currentData?.followers?.includes(userData._id) && (
                 <Button type="primary" onClick={unfollowHandle}>
                   Unfollow
                 </Button>
@@ -160,6 +160,7 @@ const OtherProfile = () => {
             <Divider />
             <PostsContainer>
               <Title level={4}>Posts</Title>
+                {posts?.length == 0 && <Title level={5}>No posts yet</Title>}
               <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
                 {postLoading ? (
                   <Fragment>

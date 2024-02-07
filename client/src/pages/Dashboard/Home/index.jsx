@@ -31,12 +31,20 @@ const Home = () => {
 
   return (
     <StyledWrapper>
-      {followingPosts.length == 0 && (
-        <Space>
-          <Title>
-            You are not following any users, <br /> 
-          </Title>
-          <Link to={"/explore"}>start exploring now</Link>
+      {followingPosts.length === 0   && (
+        <Space
+          style={{
+            color: "#fff",
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <h3 style={{ color: "#fff" }}>You are not following any users,</h3>
+          <br />
+          <Link to={"/explore"} style={{ display: "block" }}>
+            start exploring now
+          </Link>
         </Space>
       )}
       {false ? (
