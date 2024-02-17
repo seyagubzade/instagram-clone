@@ -102,7 +102,7 @@ exports.likePost = async (req, res) => {
 
   try {
     // Find the post by ID
-    const post = await Post.findById(postId);
+    const post = await Post.findById(postId).populate('author');
 
     // Check if the post exists
     if (!post) {
@@ -111,24 +111,25 @@ exports.likePost = async (req, res) => {
 
     // Check if the user has already liked the post
     if (post.likes.includes(userId)) {
-      return res
-        .status(400)
-        .json({ message: "Post already liked by the user" });
+      return res.status(400).json({ message: "Post already liked by the user" });
     }
-
+    console.log("post", post)
     // Add the user's ID to the likes array
     post.likes.push(userId);
     await post.save();
 
     // Create a notification for the post author
     const notification = new Notification({
-      user: post.author,
+      user: post.author._id,
       type: 'like',
       content: `${username} liked your post`,
-      postId: postId,
-      authorId: userId,
+      postData: {
+        imageURL: post.imageURL,
+        _id: post._id
+      },
       read: false
     });
+    console.log("notification>>",notification)
     await notification.save();
 
     res.json({ message: "Post liked successfully" });
@@ -137,6 +138,7 @@ exports.likePost = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 // Unlike a Post
 exports.unlikePost = async (req, res) => {

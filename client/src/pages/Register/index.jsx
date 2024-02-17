@@ -9,6 +9,7 @@ import { useFormik } from "formik";
 import { Link, useNavigate } from "react-router-dom";
 import { LoginAPI, RegisterAPI } from "../../store/auth/api_request";
 import toast from "react-hot-toast";
+import Icon from "../../assets/icons";
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -25,6 +26,17 @@ const validationSchema = Yup.object({
     .required("Username is required")
     .min(6, "Username must be at least 6 characters long"),
 });
+
+const StyledContent = styled(Content)`
+  padding: 0 48px;
+  min-height: 100vh;
+  max-width: 1120px;
+  margin: 0 auto;
+
+  @media screen and (max-width: 480px) {
+    padding: 0;
+  }
+`;
 
 const Register = () => {
   const { data, error } = useSelector((state) => state.auth);
@@ -60,21 +72,16 @@ const Register = () => {
   }, [data, error]);
 
   return (
-    <Content
-      style={{
-        padding: "0 48px",
-        minHeight:"100vh"
-      }}
-    >
+    <StyledContent>
       <Row style={{ padding: "20px" }}>
-        <Col xs={{ span: 24, order: 2 }} md={{ span: 12, order: 2 }}>
+        <Col xs={{ span: 24, order: 2 }} md={{ span: 12, order: 2 }} style={{display:"flex", alignItems:"center", justifyContent:"center"}}>
           <img
             src="https://media.gcflearnfree.org/content/633d944b3823fb02e84dce55_10_05_2022/Screen%20Shot%202022-10-10%20at%202.28.19%20PM.png"
             alt="Login"
             style={{ maxWidth: "100%" }}
           />
         </Col>
-        <Col xs={{ span: 24, order: 1 }} md={{ span: 12, order: 2 }}>
+        <Col xs={{ span: 24, order: 1 }} md={{ span: 12, order: 2 }} style={{display:"flex", alignItems:"center", justifyContent:"center"}}>
           <StyledForm>
             <form
               name="normal_login"
@@ -82,10 +89,7 @@ const Register = () => {
               onSubmit={formik.handleSubmit}
             >
               <div className="logo">
-                <img
-                  src="https://clipart.info/images/ccovers/1522452762Instagram-logo-png-text.png"
-                  alt=""
-                />{" "}
+                <Icon name={"igText"}/>
                 <br />
                 <h3>Sign up to see photos and videos from your friends.</h3>
               </div>
@@ -188,7 +192,7 @@ const Register = () => {
           </StyledForm>
         </Col>
       </Row>
-    </Content>
+    </StyledContent>
   );
 };
 
