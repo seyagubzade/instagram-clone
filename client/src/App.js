@@ -21,9 +21,9 @@ import Explore from "./pages/Dashboard/Explore";
 import Create from "./pages/Dashboard/Create";
 import { Link } from "react-router-dom";
 import OtherProfile from "./pages/Dashboard/OtherProfile";
-import NotFound from "./assets/images/NotFound.png";
 import { Button } from "antd";
 import EditProfile from "./pages/Dashboard/EditProfile";
+import NotFound from "./components/NotFound";
 
 function App() {
   return (
@@ -45,35 +45,10 @@ function App() {
           </Route>
           <Route element={<Login />} path="/login" />
           <Route element={<Register />} path="/register" />
-          <Route
-            element={
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <img
-                  src={NotFound}
-                  style={{
-                    width: "70%",
-                    height: "auto",
-                    margin: "40px auto 0",
-                  }}
-                />{" "}
-                <Button>
-                  <Link to={"/home"}>Go to Back</Link>
-                </Button>
-              </div>
-            }
-            path="*"
-          />
+          <Route element={<NotFound />} path="*" />
         </Routes>
       </div>
       <Toaster position="top-right" reverseOrder={false} />
-      
     </StyledWrapper>
   );
 }
