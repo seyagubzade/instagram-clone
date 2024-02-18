@@ -7,13 +7,11 @@ exports.registerUser = async (req, res) => {
   const { email, password, name, username } = req.body;
 
   try {
-    // Check if the email is already in use
     const existingEmail = await User.findOne({ email });
     if (existingEmail) {
       return res.status(400).json({ message: "Email already in use" });
     }
 
-    // Check if the username is already in use
     const existingUsername = await User.findOne({ username });
     if (existingUsername) {
       return res.status(400).json({ message: "Username already in use" });
@@ -30,7 +28,6 @@ exports.registerUser = async (req, res) => {
     });
     await newUser.save();
 
-    // Respond with success message
     res.status(201).json({ message: "User registered successfully" });
   } catch (error) {
     console.error(error);
@@ -43,7 +40,6 @@ exports.loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Find the user by email
     const user = await User.findOne({ email });
 
     // Check if the user exists
@@ -51,7 +47,6 @@ exports.loginUser = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Compare the passwords
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(401).json({ message: "Invalid password" });
@@ -60,7 +55,6 @@ exports.loginUser = async (req, res) => {
     // Generate JWT token
     const token = jwt.sign({ userId: user._id }, "seyagubzade123");
 
-    // Respond with token and user details
     res.json({ token, user });
   } catch (error) {
     console.error(error);
@@ -73,14 +67,12 @@ exports.deleteUser = async (req, res) => {
   const userId = req.params.id;
 
   try {
-    // Find the user by ID and delete it
     const deletedUser = await User.findByIdAndDelete(userId);
 
     if (!deletedUser) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Respond with success message
     res.json({ message: "User deleted successfully" });
   } catch (error) {
     console.error(error);
@@ -91,8 +83,7 @@ exports.deleteUser = async (req, res) => {
 // Get all users
 exports.getAllUsers = async (req, res) => {
   try {
-    // Fetch all users from the database
-    const users = await User.find({}, "-password"); // Exclude password field from the response
+    const users = await User.find({}, "-password"); // Exclude password 
     res.json(users);
   } catch (error) {
     console.error(error);
@@ -105,8 +96,7 @@ exports.getUserById = async (req, res) => {
   const userId = req.params.id;
 
   try {
-    // Find the user by ID
-    const user = await User.findById(userId).select("-password"); // Exclude password field from the response
+    const user = await User.findById(userId).select("-password"); // Exclude password 
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -122,15 +112,13 @@ exports.getUserById = async (req, res) => {
 // Get profile info of authenticated user
 exports.getProfileInfo = async (req, res) => {
   try {
-    // Find the user by ID from the authenticated user's token
-    const userId = req.user.id;
+    const userId = req.user.id; // user by ID from the authenticated user's token
     const user = await User.findById(userId);
     console.log(user, userId)
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Return the user's profile information including the password
     res.json(user);
   } catch (error) {
     console.error(error);
@@ -144,19 +132,16 @@ exports.updateUserProfile = async (req, res) => {
   const { name, username, profileImg } = req.body;
 
   try {
-    // Find the user by ID
     const user = await User.findById(userId);
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Update the user's profile information
     user.name = name;
     user.username = username;
     user.profileImg = profileImg;
 
-    // Save the updated user profile
     await user.save();
 
     res.json({ message: "User profile updated successfully", user });
@@ -180,11 +165,9 @@ exports.followUser = async (req, res) => {
         .json({ message: "You are already following this user" });
     }
 
-    // Update the following list for the current user
     user.following.push(userIdToFollow);
     await user.save();
 
-    // Update the followers list for the target user
     const userToFollow = await User.findById(userIdToFollow);
     userToFollow.followers.push(userId);
     await userToFollow.save();

@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const NotificationSchema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  type: String, // e.g., "like", "comment", "follow"
+  type: String, // "like", "comment", "follow"
   content: String,
   read: { type: Boolean, default: false }
 }, { timestamps: true });

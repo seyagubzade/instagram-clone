@@ -8,13 +8,11 @@ exports.createPost = async (req, res) => {
   const authorId = req.user.userId; // Access userId from the request object after authentication
 
   try {
-    // Create a new post
     const newPost = new Post({ imageURL, caption, author: authorId });
     await newPost.save();
 
-    // Add the post to the user's posts array
     const user = await User.findById(authorId);
-    user.posts.push(newPost); // Push the entire new post object
+    user.posts.push(newPost); 
     await user.save();
 
     res
@@ -29,7 +27,6 @@ exports.createPost = async (req, res) => {
 // Get all posts
 exports.getAllPosts = async (req, res) => {
   try {
-    // Fetch all posts from the database
     const posts = await Post.find()
       .populate("author", "name")
       .populate("comments.author", "name");
@@ -42,9 +39,8 @@ exports.getAllPosts = async (req, res) => {
 
 // Get all posts by user
 exports.getAllPostsByUser = async (req, res) => {
-  const userId = req.params.id; // Access userId from the request object after authentication
+  const userId = req.params.id; 
   try {
-    // Fetch all posts of the current user from the database
     const posts = await Post.find({ author: userId })
       .populate("author", "name")
       .populate("comments.author", "name");
@@ -60,10 +56,8 @@ exports.deletePostById = async (req, res) => {
   const postId = req.params.id;
 
   try {
-    // Find the post by ID and delete it
     await Post.findByIdAndDelete(postId);
 
-    // Remove the post ID from the user's posts array
     await User.updateOne({ posts: postId }, { $pull: { posts: postId } });
 
     res.json({ message: "Post deleted successfully" });
@@ -78,7 +72,6 @@ exports.getPostById = async (req, res) => {
   const postId = req.params.id;
 
   try {
-    // Find the post by ID
     const post = await Post.findById(postId)
       .populate("author", "name")
       .populate("comments.author", "name");
@@ -97,28 +90,23 @@ exports.getPostById = async (req, res) => {
 // Like a Post
 exports.likePost = async (req, res) => {
   const postId = req.params.id;
-  const userId = req.user.userId; // Assuming you attach userId to the request object after authentication
+  const userId = req.user.userId; 
   const { username } = req.body;
 
   try {
-    // Find the post by ID
     const post = await Post.findById(postId).populate('author');
 
-    // Check if the post exists
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
 
-    // Check if the user has already liked the post
     if (post.likes.includes(userId)) {
       return res.status(400).json({ message: "Post already liked by the user" });
     }
     console.log("post", post)
-    // Add the user's ID to the likes array
     post.likes.push(userId);
     await post.save();
 
-    // Create a notification for the post author
     const notification = new Notification({
       user: post.author._id,
       type: 'like',
@@ -143,18 +131,15 @@ exports.likePost = async (req, res) => {
 // Unlike a Post
 exports.unlikePost = async (req, res) => {
   const postId = req.params.id;
-  const userId = req.user.userId; // Assuming you attach userId to the request object after authentication
+  const userId = req.user.userId; 
 
   try {
-    // Find the post by ID
     const post = await Post.findById(postId);
 
-    // Check if the post exists
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
 
-    // Check if the user has liked the post
     if (!post.likes.includes(userId)) {
       return res.status(400).json({ message: "Post not liked by the user" });
     }
@@ -175,13 +160,11 @@ exports.unlikePost = async (req, res) => {
 exports.addComment = async (req, res) => {
   const postId = req.params.id;
   const { text, username } = req.body;
-  const userId = req.user.userId; // Assuming you attach userId to the request object after authentication
+  const userId = req.user.userId; 
 
   try {
-    // Find the post by ID
     const post = await Post.findById(postId);
 
-    // Check if the post exists
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
@@ -210,18 +193,16 @@ exports.addComment = async (req, res) => {
 
 // Get posts from users the current user follows
 exports.getPostsFromFollowing = async (req, res) => {
-  const userId = req.user.userId; // Assuming you attach userId to the request object after authentication
+  const userId = req.user.userId; 
 
   try {
-    // Find the current user to get the list of users they follow
     const user = await User.findById(userId);
     const followingIds = user.following; // Assuming following is an array of user IDs
 
-    // Find all posts from users the current user follows
     const postsFromFollowing = await Post.find({ author: { $in: followingIds } })
       .populate({
         path: 'author',
-        select: 'name username profileImg', // Select the fields you want to populate
+        select: 'name username profileImg', 
       })
       .populate('comments.author', 'name');
 

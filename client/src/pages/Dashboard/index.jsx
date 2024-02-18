@@ -1,5 +1,5 @@
 import { Button, Layout, Menu } from "antd";
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Icon from "../../assets/icons";
 import { useAuth } from "../../context/UserAuthContext";
@@ -12,7 +12,7 @@ const Dashboard = () => {
   const { isAuthenticated, setIsAuthenticated, userData } = useAuth();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const location = useLocation();
-
+  const navigate = useNavigate()
   const isTabletOrMobile = useMediaQuery({ query: "(max-width: 720px)" });
 
   const sideBarData = [
@@ -127,7 +127,7 @@ const Dashboard = () => {
                 display: "flex",
                 alignItems: "center",
                 position: "absolute",
-                bottom: "20px",
+                bottom: "30%",
               }}
               onClick={() => setIsCollapsed(!isCollapsed)}
             >
@@ -135,6 +135,27 @@ const Dashboard = () => {
                 isCollapsed ? <Icon name={"doubleRight"} /> : <Icon name={"doubleLeft"}/>
               }
             </Button>
+            <Button
+              style={{
+                background: "#000",
+                border:"none",
+                color:"#fff",
+                padding: "12px",
+                display: "flex",
+                alignItems: "center",
+                position: "absolute",
+                bottom: "40px",
+              }}
+              onClick={() => {
+                navigate("/login")
+                localStorage.removeItem("authToken");
+                localStorage.removeItem("mainUser");
+              }}
+            >
+              Logout
+            </Button>
+            
+            
           </Menu>
         </Sider>
         <Layout
@@ -144,7 +165,7 @@ const Dashboard = () => {
             color: "#fff",
           }}
         >
-          <Content style={{ padding: "0 24px 24px" }}>
+          <Content style={{ padding: "0" }}>
             <Outlet />
           </Content>
         </Layout>

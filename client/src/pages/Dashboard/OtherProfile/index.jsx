@@ -154,7 +154,7 @@ const OtherProfile = () => {
                   Unfollow
                 </Button>
               )}
-              <Button type="primary">Message</Button>
+              <Button type="primary" onClick={()=>navigate('/messages')}>Message</Button>
             </ProfileActions>
 
             <Divider />
