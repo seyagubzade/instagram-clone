@@ -103,21 +103,33 @@ exports.likePost = async (req, res) => {
     if (post.likes.includes(userId)) {
       return res.status(400).json({ message: "Post already liked by the user" });
     }
-    console.log("post", post)
+
     post.likes.push(userId);
     await post.save();
 
+    const userWhoLiked = await User.findById(userId);
+
     const notification = new Notification({
-      user: post.author._id,
+      user: {
+        id: post.author._id,
+        username: post.author.username,
+        profileImg: post.author.profileImg
+      },
+      byWhom: {
+        id: userId,
+        username: userWhoLiked.username,
+        profileImg: userWhoLiked.profileImg
+      },
       type: 'like',
-      content: `${username} liked your post`,
-      postData: {
-        imageURL: post.imageURL,
-        _id: post._id
+      content: 'liked your post',
+      post: {
+        id: post._id,
+        imageURL: post.imageURL
       },
       read: false
     });
-    console.log("notification>>",notification)
+
+    console.log(notification)
     await notification.save();
 
     res.json({ message: "Post liked successfully" });
@@ -169,19 +181,32 @@ exports.addComment = async (req, res) => {
       return res.status(404).json({ message: "Post not found" });
     }
 
-    // Add the comment to the comments array
     post.comments.push({ text, author: userId });
     await post.save();
 
-    // Create a notification for the post author
+    const postAuthor = await User.findById(post.author);
+    const userWhoLiked = await User.findById(userId);
+
     const notification = new Notification({
-      user: post.author,
+      user: {
+        id: post.author,
+        username: postAuthor.username,
+        profileImg: postAuthor.profileImg
+      },
+      byWhom: {
+        id: userId,
+        username: username,
+        profileImg: userWhoLiked.profileImg
+      },
       type: 'comment',
-      content: `${username} commented on your post`,
-      postId: postId,
-      authorId: userId,
+      content: `commented on your post: ${text}`,
+      post: {
+        id: post._id,
+        imageURL: post.imageURL
+      },
       read: false
     });
+
     await notification.save();
 
     res.json({ message: "Comment added successfully" });
@@ -190,6 +215,7 @@ exports.addComment = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 // Get posts from users the current user follows
 exports.getPostsFromFollowing = async (req, res) => {

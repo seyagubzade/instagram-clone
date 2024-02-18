@@ -4,7 +4,7 @@ const Notification = require('../models/Notification.model');
 exports.getNotifications = async (req, res) => {
   try {
     const userId = req.user.userId;
-    const notifications = await Notification.find({ user: userId }).sort({ createdAt: -1 });
+    const notifications = await Notification.find({ 'user.id': userId }).sort({ createdAt: -1 });
     res.json(notifications);
   } catch (error) {
     console.error(error);
@@ -22,7 +22,3 @@ exports.markNotificationAsRead = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
-
-
-
-
