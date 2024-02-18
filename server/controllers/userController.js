@@ -1,6 +1,7 @@
 const User = require("../models/User.model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const Notification = require("../models/Notification.model");
 
 // Register user
 exports.registerUser = async (req, res) => {
@@ -152,6 +153,7 @@ exports.updateUserProfile = async (req, res) => {
 };
 
 // Follow a user
+// Follow a user
 exports.followUser = async (req, res) => {
   const { userIdToFollow } = req.body;
   const userId = req.user.userId;
@@ -172,12 +174,36 @@ exports.followUser = async (req, res) => {
     userToFollow.followers.push(userId);
     await userToFollow.save();
 
+    // Create notification for the user being followed
+    const userWhoFollowed = await User.findById(userId);
+    const notification = new Notification({
+      user: {
+        id: userIdToFollow,
+        username: userToFollow.username,
+        profileImg: userToFollow.profileImg
+      },
+      byWhom: {
+        id: userId,
+        username: userWhoFollowed.username,
+        profileImg: userWhoFollowed.profileImg
+      },
+      type: 'follow',
+      content: 'started following you',
+      post: {
+        id: null, 
+        imageURL: null 
+      },
+      read: false
+    });
+    await notification.save();
+
     res.json({ message: "User followed successfully" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 // Unfollow a user
 exports.unfollowUser = async (req, res) => {

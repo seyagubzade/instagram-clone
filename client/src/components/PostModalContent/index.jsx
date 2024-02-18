@@ -77,6 +77,7 @@ const PostModalContent = ({
   return (
     <ModalContentContainer>
       <Row gutter={[16, 16]} style={{ width: "100%" }}>
+        {currentPost && console.log("currentPost>>>",currentPost)}
         {loading ? (
           <LoadingSpinner />
         ) : currentPost ? (
@@ -303,7 +304,7 @@ const LikesComments = styled.div`
 const CommentsList = styled.div`
   margin-top: 20px;
   color: #fff;
-  max-height: 140px;
+  max-height: 250px;
   overflow-y: auto;
 `;
 
