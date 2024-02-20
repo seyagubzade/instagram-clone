@@ -11,7 +11,7 @@ import Title from "antd/es/typography/Title";
 import { formatTime } from "../../../../utils/formatTime";
 import { v4 as uuidv4 } from "uuid";
 
-const ChatContainer = ({ currentChat, socket }) => {
+const ChatContainer = ({ currentChat, socket, isMobileOnly }) => {
   const [text, setText] = useState("");
   const [messages, setMessages] = useState([]);
   const [receivedMessage, setReceivedMessage] = useState(null);
@@ -25,8 +25,8 @@ const ChatContainer = ({ currentChat, socket }) => {
   };
 
   useEffect(() => {
-    if(currentChat){
-        getAllMessages();
+    if (currentChat) {
+      getAllMessages();
     }
   }, [currentChat]);
 
@@ -51,30 +51,29 @@ const ChatContainer = ({ currentChat, socket }) => {
         createdAt: new Date().toISOString(),
         sender: mainUser._id,
         recipient: currentChat._id,
-        message:{
-            text: text
+        message: {
+          text: text,
         },
-        status: 'sent',
-        messageType: 'text',
+        status: "sent",
+        messageType: "text",
       });
-        setText("");
-        setMessages(newMessagesArr)
-
+      setText("");
+      setMessages(newMessagesArr);
     }
   };
 
-  useEffect(()=>{
-    if(socket.current){
-        socket.current.on("recieve-message", (msg)=>{
-            console.log("new message>>>",msg)
-            setReceivedMessage(msg)
-        })
+  useEffect(() => {
+    if (socket.current) {
+      socket.current.on("recieve-message", (msg) => {
+        console.log("new message>>>", msg);
+        setReceivedMessage(msg);
+      });
     }
-  },[])
+  }, []);
 
-  useEffect(()=>{
-    receivedMessage && setMessages((prev)=>[...prev, receivedMessage])
-  },[receivedMessage])
+  useEffect(() => {
+    receivedMessage && setMessages((prev) => [...prev, receivedMessage]);
+  }, [receivedMessage]);
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -91,7 +90,7 @@ const ChatContainer = ({ currentChat, socket }) => {
           background: "#000",
         }}
       >
-        <Space style={{ margin: "10px 0"}}>
+        <Space style={{ margin: "10px 0" }}>
           <Link to={`/users/${currentChat._id}`}>
             <Avatar
               src={
@@ -161,15 +160,21 @@ const ChatContainer = ({ currentChat, socket }) => {
 };
 
 const StyledWrapper = styled.div`
-  padding: 30px 10px;
+  padding: 30px 10px 10px;
   height: 100vh;
   display: flex;
   flex-direction: column;
+  @media screen and (max-width: 480px){
+    padding: 6px;
+  }
 `;
 
 const StyledMessageHeader = styled(Card)`
+  padding: 30px 10px;
   height: 90px;
   padding-right: 5px;
+  display: flex;
+  flex-direction: column;
   /*overflow: hidden;*/
   .ant-card {
     box-sizing: border-box;
@@ -282,6 +287,9 @@ const AddCommentForm = styled.div`
       cursor: pointer;
       text-align: center;
     }
+  }
+  @media screen and (max-width: 480px){
+    margin-bottom: 0px;
   }
 `;
 

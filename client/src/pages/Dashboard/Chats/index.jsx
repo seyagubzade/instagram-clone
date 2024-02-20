@@ -4,11 +4,13 @@ import Contacts from "./Contacts";
 import styled from "styled-components";
 import ChatContainer from "./ChatContainer";
 import { io } from "socket.io-client";
+import { useMediaQuery } from "react-responsive";
 
 const Chats = () => {
   const socket = useRef();
   const [currentChat, setCurrentChat] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
+  const isMobileOnly = useMediaQuery({ query: "(max-width: 480px)" });
 
   useEffect(() => {
     if (localStorage.getItem("mainUser")) {
@@ -30,10 +32,10 @@ const Chats = () => {
   return (
     <StyledWrapper>
       <Row>
-        <Col xs={{ span: 8, order: 1 }} lg={{ span: 8, order: 1 }}>
+        <Col xs={{ span: 8, order: 1 }} md={{span: 8}} lg={{ span: 8, order: 1 }} style={isMobileOnly ? {width:"23.33%", flex:"0 0 23.333333%"} : ""}>
           <Contacts changeChat={handleChatChange} />
         </Col>
-        <Col xs={{ span: 16, order: 2 }} lg={{ span: 16, order: 2 }}>
+        <Col xs={{ span: 16, order: 2 }} lg={{ span: 16, order: 2 }} style={isMobileOnly ? {maxWidth:"76.666667%", flex:"0 0 76.666667%", height:"90vh"} : ""}>
           {!currentChat ? (
             <div className="welcome-chat">
               <svg
@@ -52,7 +54,7 @@ const Chats = () => {
               <p>Send private photos and messages to a friend</p>
             </div>
           ) : (
-            <ChatContainer currentChat={currentChat} socket={socket} />
+            <ChatContainer currentChat={currentChat} socket={socket} isMobileOnly={isMobileOnly}/>
           )}
         </Col>
       </Row>

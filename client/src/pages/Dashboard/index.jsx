@@ -12,8 +12,9 @@ const Dashboard = () => {
   const { isAuthenticated, setIsAuthenticated, userData } = useAuth();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const location = useLocation();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const isTabletOrMobile = useMediaQuery({ query: "(max-width: 720px)" });
+  const isMobileOnly = useMediaQuery({ query: "(max-width: 480px)" });
 
   const sideBarData = [
     {
@@ -59,111 +60,164 @@ const Dashboard = () => {
     "/";
 
   useEffect(() => {
-    if(isTabletOrMobile){
+    if (isTabletOrMobile) {
       setIsCollapsed(true);
-    }else{
-      setIsCollapsed(false)
+    } else {
+      setIsCollapsed(false);
     }
   }, [isTabletOrMobile]);
   return (
     <StyledWrapper>
-      <Layout style={{ minHeight: "100vh", background:"#000" }}>
-        <Sider
-          trigger={null}
-          collapsible
-          width={isCollapsed ? 100 : 220}
-          style={{
-            background: "#000",
-            color: "#fff",
-            position: "fixed",
-            left: 0,
-            top: 0,
-            height: "100vh",
-            borderRight: "1px solid rgba(255,255,255,0.2)",
-            padding: "0 12px",
-          }}
-        >
-          <div className="logo">
-            {isCollapsed ? <Icon name={"igIcon"} /> : <Icon name={"igText"} />}
-          </div>
-          <Menu
-            mode="inline"
-            defaultSelectedKeys={[defaultSelectedKey]}
+      <Layout style={{ minHeight: "100vh", background: "#000" }}>
+        {isMobileOnly ? (
+          <MobileSider>
+            <Menu
+              mode="inline"
+              defaultSelectedKeys={[defaultSelectedKey]}
+              style={{
+                height: "80px",
+                width: "100%",
+                borderRight: 0,
+                background: "#000",
+                color: "#fff",
+              }}
+            >
+              {sideBarData.map((data, index) => (
+                <Menu.Item
+                  key={data.key}
+                  style={{
+                    width: "max-content",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    paddingLeft: isCollapsed ? "14px" : "24px",
+                  }}
+                >
+                  <Link
+                    to={data.path}
+                    style={{ justifyContent: isCollapsed ? "center" : "" }}
+                  >
+                    <Icon
+                      name={data.icon}
+                      style={{ paddingLeft: isCollapsed ? "2px" : "" }}
+                    />
+                  </Link>
+                </Menu.Item>
+              ))}
+            </Menu>
+          </MobileSider>
+        ) : (
+          <Sider
+            trigger={null}
+            collapsible
+            width={isCollapsed ? 100 : 220}
             style={{
-              height: "100%",
-              width: "100%",
-              borderRight: 0,
               background: "#000",
               color: "#fff",
+              position: "fixed",
+              left: 0,
+              top: 0,
+              height: "100vh",
+              borderRight: "1px solid rgba(255,255,255,0.2)",
+              padding: "0 12px",
             }}
           >
-            {sideBarData.map((data, index) => (
-              <Menu.Item
-                key={data.key}
+            <div className="logo">
+              {isCollapsed ? (
+                <Icon name={"igIcon"} />
+              ) : (
+                <Icon name={"igText"} />
+              )}
+            </div>
+            <Menu
+              mode="inline"
+              defaultSelectedKeys={[defaultSelectedKey]}
+              style={{
+                height: "100%",
+                width: "100%",
+                borderRight: 0,
+                background: "#000",
+                color: "#fff",
+              }}
+            >
+              {sideBarData.map((data, index) => (
+                <Menu.Item
+                  key={data.key}
+                  style={{
+                    width: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    paddingLeft: isCollapsed ? "14px" : "24px",
+                  }}
+                >
+                  <Link
+                    to={data.path}
+                    style={{ justifyContent: isCollapsed ? "center" : "" }}
+                  >
+                    <Icon
+                      name={data.icon}
+                      style={{ paddingLeft: isCollapsed ? "2px" : "" }}
+                    />
+                    {!isCollapsed ? data.name : ""}
+                  </Link>
+                </Menu.Item>
+              ))}
+              <Button
                 style={{
-                  width: "100%",
+                  background: "#000",
+                  padding: "12px",
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: "center",
-                  paddingLeft: isCollapsed ? "14px" : "24px",
+                  position: "absolute",
+                  bottom: "30%",
+                }}
+                onClick={() => setIsCollapsed(!isCollapsed)}
+              >
+                {isCollapsed ? (
+                  <Icon name={"doubleRight"} />
+                ) : (
+                  <Icon name={"doubleLeft"} />
+                )}
+              </Button>
+              <Button
+                style={{
+                  background: "#000",
+                  border: "none",
+                  color: "#fff",
+                  padding: "12px",
+                  display: "flex",
+                  alignItems: "center",
+                  position: "absolute",
+                  bottom: "40px",
+                }}
+                onClick={() => {
+                  navigate("/login");
+                  localStorage.removeItem("authToken");
+                  localStorage.removeItem("mainUser");
                 }}
               >
-                <Link
-                  to={data.path}
-                  style={{ justifyContent: isCollapsed ? "center" : "" }}
-                >
-                  <Icon
-                    name={data.icon}
-                    style={{ paddingLeft: isCollapsed ? "2px" : "" }}
-                  />
-                  {!isCollapsed ? data.name : ""}
-                </Link>
-              </Menu.Item>
-            ))}
-            <Button
-              style={{
-                background: "#000",
-                padding: "12px",
-                display: "flex",
-                alignItems: "center",
-                position: "absolute",
-                bottom: "30%",
-              }}
-              onClick={() => setIsCollapsed(!isCollapsed)}
-            >
-              {
-                isCollapsed ? <Icon name={"doubleRight"} /> : <Icon name={"doubleLeft"}/>
-              }
-            </Button>
-            <Button
-              style={{
-                background: "#000",
-                border:"none",
-                color:"#fff",
-                padding: "12px",
-                display: "flex",
-                alignItems: "center",
-                position: "absolute",
-                bottom: "40px",
-              }}
-              onClick={() => {
-                navigate("/login")
-                localStorage.removeItem("authToken");
-                localStorage.removeItem("mainUser");
-              }}
-            >
-              Logout
-            </Button>
-            
-            
-          </Menu>
-        </Sider>
+                Logout
+              </Button>
+            </Menu>
+          </Sider>
+        )}
+
         <Layout
-          style={{
-            marginLeft: isCollapsed ? 100 : 220,
-            background: "#000",
-            color: "#fff",
-          }}
+          style={
+            isMobileOnly
+              ? {
+                  marginLeft: "0px",
+                  background: "#000",
+                  color: "#fff",
+                  padding:"6px"
+                }
+              : {
+                  marginLeft: isCollapsed ? 100 : 220,
+                  background: "#000",
+                  color: "#fff",
+                }
+          }
         >
           <Content style={{ padding: "0" }}>
             <Outlet />
@@ -198,7 +252,7 @@ const StyledWrapper = styled.div`
     }
   }
   .ant-menu-light .ant-menu-item-selected {
-    background-color: rgba(255, 255, 255, 0.20);
+    background-color: rgba(255, 255, 255, 0.2);
     color: #fff;
   }
   .ant-layout-sider-children {
@@ -208,6 +262,25 @@ const StyledWrapper = styled.div`
       flex-direction: column;
       align-items: center;
     }
+  }
+`;
+
+const MobileSider = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  bottom: 0;
+  z-index: 12000;
+  ul {
+    height: 80px;
+    width: 100%;
+    border-right: 0px;
+    background: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
+    display: flex;
+    justify-content: space-around;
   }
 `;
 export default Dashboard;

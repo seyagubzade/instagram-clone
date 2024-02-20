@@ -11,6 +11,7 @@ import {
   searchUserByUsername,
 } from "../../../../store/users/api_request";
 import { Link } from "react-router-dom";
+import { useMediaQuery } from "react-responsive";
 
 const { TextArea } = Input;
 
@@ -20,20 +21,20 @@ const Contacts = ({ changeChat }) => {
   const [searchInput, setSearchInput] = useState("");
   const [currentSelected, setCurrentSelected] = useState(undefined);
   const [otherUsers, setOtherUsers] = useState([]);
-  const mainUserId = JSON.parse(localStorage.getItem("mainUser"))._id
+  const mainUserId = JSON.parse(localStorage.getItem("mainUser"))._id;
+  const isTabletOrMobile = useMediaQuery({ query: "(max-width: 600px)" });
 
   useEffect(() => {
     dispatch(getAllUsers());
   }, []);
 
   useEffect(() => {
+    console.log("isTabletOrMobile>>>", isTabletOrMobile);
+  }, [isTabletOrMobile]);
+
+  useEffect(() => {
     if (data) {
-      setOtherUsers(() =>
-        data.filter(
-          (user) =>
-            user._id !== mainUserId
-        )
-      );
+      setOtherUsers(() => data.filter((user) => user._id !== mainUserId));
     }
   }, [data]);
 
@@ -54,25 +55,37 @@ const Contacts = ({ changeChat }) => {
 
   return (
     <StyledWrapper>
-      <Form layout="vertical">
-        <Form.Item name="username">
-          <Input
-            type="text"
-            placeholder="Search"
-            value={searchInput}
-            onChange={(e) => handleSearch(e.target.value)}
-            prefix={<Icon name={"search"} />}
-            size="large"
-          />
-        </Form.Item>
-      </Form>
+      {isTabletOrMobile ? null : (
+        <Form layout="vertical">
+          <Form.Item name="username">
+            <Input
+              type="text"
+              placeholder="Search"
+              value={searchInput}
+              onChange={(e) => handleSearch(e.target.value)}
+              prefix={<Icon name={"search"} />}
+              size="large"
+            />
+          </Form.Item>
+        </Form>
+      )}
 
       <StyledSearchResult>
-        {otherUsers.length>0 &&
+        {otherUsers.length > 0 &&
           otherUsers?.map((user, index) => (
             <Card
               key={user._id}
-              style={{ marginBottom: 12, padding: "0" }}
+              style={
+                isTabletOrMobile
+                  ? {
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      marginBottom: 12,
+                      padding: "0",
+                    }
+                  : { marginBottom: 12, padding: "0" }
+              }
               onClick={() => changeCurrentChat(index, user)}
             >
               <Space style={{ margin: "10px 0" }}>
@@ -85,14 +98,19 @@ const Contacts = ({ changeChat }) => {
                 >
                   {user.username}
                 </Avatar>
-                <Space>
-                  <Title
-                    level={5}
-                    style={{ display: "flex", marginLeft: "10px" }}
-                  >
-                    {user.username}
-                  </Title>
-                </Space>
+                {isTabletOrMobile ? (
+                  ""
+                ) : (
+                  <Space>
+                    <Title
+                      level={5}
+                      style={{ display: "flex", marginLeft: "10px" }}
+                    >
+                      {user.username}
+                    </Title>
+                  </Space>
+                )}
+
                 {/* </Link> */}
               </Space>
             </Card>
@@ -106,7 +124,9 @@ const StyledWrapper = styled.div`
   padding: 30px 10px;
   position: sticky;
   top: 0;
+  overflow-y: auto;
   max-height: 100vh;
+  height: 100vh;
   .ant-typography {
     color: #fff;
   }
@@ -129,6 +149,9 @@ const StyledWrapper = styled.div`
   }
   &::-webkit-input-placeholder {
     color: rgba(255, 255, 255, 0.88);
+  }
+  @media screen and (max-width: 480px) {
+    padding: 6px;
   }
   @media screen and (min-width: 992px) {
     padding: 30px 10px;

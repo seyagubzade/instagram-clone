@@ -20,7 +20,7 @@ exports.registerUser = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create a new user
+    // creating a new user
     const newUser = new User({
       email,
       password: hashedPassword,
@@ -153,7 +153,6 @@ exports.updateUserProfile = async (req, res) => {
 };
 
 // Follow a user
-// Follow a user
 exports.followUser = async (req, res) => {
   const { userIdToFollow } = req.body;
   const userId = req.user.userId;
@@ -211,7 +210,6 @@ exports.unfollowUser = async (req, res) => {
   const userId = req.user.userId;
 
   try {
-    // Check if the user is following the target user
     const user = await User.findById(userId);
     const followingIndex = user.following.indexOf(userIdToUnfollow);
     if (followingIndex === -1) {
@@ -224,7 +222,6 @@ exports.unfollowUser = async (req, res) => {
     user.following.splice(followingIndex, 1);
     await user.save();
 
-    // Remove the current user from the followers list of the target user
     const userToUnfollow = await User.findById(userIdToUnfollow);
     const followerIndex = userToUnfollow.followers.indexOf(userId);
     userToUnfollow.followers.splice(followerIndex, 1);
