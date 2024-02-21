@@ -19,7 +19,6 @@ const Notifications = () => {
   }, []);
 
   return (
-    <div>
       <StyledWrapper>
         <Title level={4} style={{ marginBottom: "20px" }}>
           Notifications
@@ -48,13 +47,13 @@ const Notifications = () => {
           </Space>
         )}
       </StyledWrapper>
-    </div>
   );
 };
 
 const StyledWrapper = styled.div`
   margin: 40px auto;
   max-width: 720px;
+  padding: 0 16px;
 
   .ant-typography {
     color: #fff;
