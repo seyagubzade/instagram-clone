@@ -16,6 +16,7 @@ import LoadingSpinner from "../LoadingSpinner";
 import { ExclamationCircleFilled, DeleteOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router";
 import { getUserById } from "../../store/users/api_request";
+import { useMediaQuery } from "react-responsive";
 const { confirm } = Modal;
 
 const PostModalContent = ({
@@ -25,6 +26,7 @@ const PostModalContent = ({
   setTrackUpdate,
   setIsModalOpen,
 }) => {
+  const isMobileOnly = useMediaQuery({ query: "(max-width: 480px)" });
   const dispatch = useDispatch();
   const { currentPost, loading } = useSelector((state) => state.post);
   const [userData, setUserData] = useState(
@@ -77,7 +79,7 @@ const PostModalContent = ({
   return (
     <ModalContentContainer>
       <Row gutter={[16, 16]} style={{ width: "100%" }}>
-        {currentPost && console.log("currentPost>>>",currentPost)}
+        {currentPost && console.log("currentPost>>>", currentPost)}
         {loading ? (
           <LoadingSpinner />
         ) : currentPost ? (
@@ -212,6 +214,9 @@ const PostModalContent = ({
 const ModalContentContainer = styled.div`
   width: 100%;
   min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   .ant-modal-confirm-body-wrapper {
     padding: 12px !important;
@@ -304,8 +309,14 @@ const LikesComments = styled.div`
 const CommentsList = styled.div`
   margin-top: 20px;
   color: #fff;
-  max-height: 250px;
   overflow-y: auto;
+  max-height: 250px;
+  @media screen and (max-width: 480px) {
+    max-height: 70px;
+  }
+  @media screen and (max-width: 720px) {
+    max-height: 120px;
+  }
 `;
 
 const Comment = styled.div`

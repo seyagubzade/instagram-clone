@@ -35,7 +35,7 @@ const Chats = () => {
         <Col xs={{ span: 8, order: 1 }} md={{span: 8}} lg={{ span: 8, order: 1 }} style={isMobileOnly ? {width:"23.33%", flex:"0 0 23.333333%"} : ""}>
           <Contacts changeChat={handleChatChange} />
         </Col>
-        <Col xs={{ span: 16, order: 2 }} lg={{ span: 16, order: 2 }} style={isMobileOnly ? {maxWidth:"76.666667%", flex:"0 0 76.666667%", height:"90vh"} : ""}>
+        <Col xs={{ span: 16, order: 2 }} lg={{ span: 16, order: 2 }} style={isMobileOnly ? {maxWidth:"76.666667%", flex:"0 0 76.666667%", height:"100vh", paddingBottom:"70px"} : ""}>
           {!currentChat ? (
             <div className="welcome-chat">
               <svg

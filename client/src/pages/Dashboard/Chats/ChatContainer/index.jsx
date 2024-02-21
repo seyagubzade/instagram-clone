@@ -161,7 +161,7 @@ const ChatContainer = ({ currentChat, socket, isMobileOnly }) => {
 
 const StyledWrapper = styled.div`
   padding: 30px 10px 10px;
-  height: 100vh;
+  height: 100%;
   display: flex;
   flex-direction: column;
   @media screen and (max-width: 480px){
