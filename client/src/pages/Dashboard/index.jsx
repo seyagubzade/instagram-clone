@@ -192,9 +192,11 @@ const Dashboard = () => {
                   bottom: "40px",
                 }}
                 onClick={() => {
-                  navigate("/login");
-                  localStorage.removeItem("authToken");
-                  localStorage.removeItem("mainUser");
+                  localStorage.clear()
+                  // localStorage.removeItem("mainUser");
+                  // localStorage.removeItem("authToken");
+                  // navigate("/login");
+                  window.location.reload()
                 }}
               >
                 Logout

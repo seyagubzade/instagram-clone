@@ -56,7 +56,7 @@ const Login = () => {
       localStorage.setItem("mainUser", JSON.stringify(data.user));
       navigate("/home")
     } else if (error) {
-      toast.error(error.message, {
+      toast.error("User already exsists", {
         position: "top-right",
         autoClose: 3000,
       });
